@@ -10,6 +10,8 @@ import java.util.Properties
 import scala.io.Source
 import scala.io.Source.fromURL
 
+import java.nio.file.{Paths, Files}
+
 /**********************************************************************************************************************
  *
  * Spark Job for scalable deletion of Individual Records from large Parquet datasets. Required for maintaining GDPR
@@ -87,18 +89,23 @@ object PII {
     //exit(0)
 
     //########################## Get the Parameters of the Job ##########################################
-    // Assuming that application.properties is in the root folder of your applicationval url = getClass.getResource("application.properties")
-    val url = getClass.getResource("application.properties.prop")
+
     val properties: Properties = new Properties()
 
-    if (url != null) {
-      val source = Source.fromURL(url)
+    if (Files.exists(Paths.get("./application.properties.prop"))){
+      val source = Source.fromURL("file:./application.properties.prop")
       properties.load(source.bufferedReader())
     }
-    else {
-      //logger.error("properties file cannot be loaded at path " +path)
-      throw new FileNotFoundException("Properties file cannot be loaded")
+    else if (Files.exists(Paths.get("application.properties.prop"))) {
+      val source = Source.fromURL("file:application.properties.prop")
+      properties.load(source.bufferedReader())
     }
+    else{
+      println("no properties file, exiting")
+      println(System.getProperty("user.dir"))
+      System.exit(0)
+    }
+
 
     val genDS = properties.getProperty("generate.synthetic.datasets").toBoolean
     println(genDS)
@@ -119,6 +126,7 @@ object PII {
     val controledExec = properties.getProperty("controled.exec").toBoolean
     println(controledExec)
 
+    //System.exit(0)
 
     //#####################################################################################################
 

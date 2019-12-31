@@ -1,11 +1,12 @@
 import java.io.FileNotFoundException
+import java.nio.file.{Files, Paths}
 import java.util.Properties
 
 import PII.getClass
 import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StringType, DoubleType, StructField, StructType}
+import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 
 import scala.io.Source
 import scala.util.Random
@@ -20,8 +21,19 @@ object GenSynt {
 
     val properties: Properties = new Properties()
 
-    val source = Source.fromURL("file:./dsgen.properties")
-    properties.load(source.bufferedReader())
+    if (Files.exists(Paths.get("./dsgen.properties"))){
+      val source = Source.fromURL("file:./dsgen.properties")
+      properties.load(source.bufferedReader())
+    }
+    else if (Files.exists(Paths.get("dsgen.properties"))) {
+      val source = Source.fromURL("file:dsgen.properties")
+      properties.load(source.bufferedReader())
+    }
+    else{
+      println("no properties file, exiting")
+      println(System.getProperty("user.dir"))
+      System.exit(0)
+    }
 
     val dbName = properties.getProperty("db.name")
     println(dbName)
@@ -31,6 +43,8 @@ object GenSynt {
     println(innerIter)
     val master = properties.getProperty("master")
     println(master)
+
+    //System.exit(0)
 
     val spark = SparkSession.builder
       .master(master)
