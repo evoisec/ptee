@@ -6,7 +6,7 @@ import PII.getClass
 import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{DoubleType, StringType, IntegerType, StructField, StructType}
 
 import scala.io.Source
 import scala.util.Random
@@ -37,6 +37,8 @@ object GenSynt {
 
     val dbName = properties.getProperty("db.name")
     println(dbName)
+    val initRec = properties.getProperty("initial.record.count").toInt
+    println(initRec)
     val outerIter = properties.getProperty("outer.iterations").toInt
     println(outerIter)
     val innerIter = properties.getProperty("inner.iterations").toInt
@@ -51,50 +53,83 @@ object GenSynt {
       .appName("oltp-gdpr")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
-      .config("spark.sql.warehouse.dir", "/opt/dwh")
-      .enableHiveSupport()
+      //.config("spark.sql.warehouse.dir", "/opt/dwh")
+      //.enableHiveSupport()
       .getOrCreate()
 
     import spark.implicits._
 
-    val data = (1 to 4).map(_ => Seq.fill(4)(Random.nextDouble).toList ::: List("waddas sfdfsdfjksdhfsdkjhf dsfjidsfhksdhfsdjfjsdhgf"))
-
-    println(data)
-
-    //System.exit(0)
-
-    val k = data.flatMap( x => (1 to innerIter).map( _ => x ) )
-
-    println(k)
-
-    //System.exit(0)
-
-    val colNames = (1 to 4).mkString(",")
-    var sch = StructType(colNames.split(",").map(fieldName => StructField(fieldName, DoubleType, true)))
-    sch = sch.add("NIN", "String", true)
-    var rdd = spark.sparkContext.parallelize(data.map(x => Row(x:_*)))
-
-    var d1 = rdd.flatMap(x => (1 to innerIter).map(_ => x))
-
-    d1 = d1.repartition(10)
-
-    for( i <- (0 to outerIter) )
-    {
-      d1 = d1.flatMap( x => (1 to innerIter).map(_ => x) )
+    def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
+      val sb = new StringBuilder
+      for (i <- 1 to length) {
+        val randomNum = util.Random.nextInt(chars.length)
+        sb.append(chars(randomNum))
+      }
+      sb.toString
     }
 
+    def randomAlpha(length: Int): String = {
+      val chars = ('a' to 'z') ++ ('A' to 'Z')
+      randomStringFromCharList(length, chars)
+    }
 
-    val df = spark.sqlContext.createDataFrame(d1, sch)
+    var dd = (1 to 1)
+    println(dd)
+    var ggg = dd.flatMap( x => (1 to initRec).map(_ => x) )
+    println(ggg)
+    for (b <- (1 to outerIter)){
+
+      ggg = ggg.flatMap( x => (1 to innerIter).map(_ => x) )
+      println(ggg)
+
+    }
+    // num of internal iteration on the pwer of external iter times inital element count = total
+    println(ggg)
+    println(ggg.length)
+    val kkk = ggg.map(x => Row(randomAlpha(4), Random.nextInt(1000)))
+    println(kkk)
+    println(kkk.length)
+
+    //System.exit(0)
+
+
+    var schemaTyped = new StructType()
+
+    schemaTyped = schemaTyped.add("NIN", IntegerType, true)
+    schemaTyped = schemaTyped.add("NAME", "String", true)
+    schemaTyped = schemaTyped.add("BENEFITS", IntegerType, true)
+    schemaTyped = schemaTyped.add("ADDRESS", "String", true)
+
+    var rdd = spark.sparkContext.parallelize(kkk)
+
+    var d1 = rdd.repartition(2)
+
+    for( i <- (0 to 1) )
+    {
+      d1 = d1.flatMap( x => (1 to 2).map(_ => x) )
+    }
+
+    d1 = d1.map(x => Row(Random.nextInt(1000), randomAlpha(4), Random.nextInt(1000), randomAlpha(8)))
+
+    //println(d1.collect().toList)
+
+
+    val df = spark.sqlContext.createDataFrame(d1, schemaTyped)
+
 
     df.printSchema()
     df.show()
+
+    println(df.count())
+
+    //System.exit(0)
 
     df.write
       .mode("overwrite")
       .format("csv")
       //.partitionBy("dob")
       //.saveAsTable(dbName + ".synt")
-      .save(dbName)
+      .save("/opt/synt.csv")
 
     //val dff = spark.sql("SELECT * FROM " + dbName + ".synt")
     //dff.show()
