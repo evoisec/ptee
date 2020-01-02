@@ -11,6 +11,14 @@ import org.apache.spark.sql.types.{DoubleType, StringType, IntegerType, StructFi
 import scala.io.Source
 import scala.util.Random
 
+/**********************************************************************************************************************
+ *
+ * Spark Job for scalable generation (leverages the parallel compute power of the entire Hadoop Cluster)
+ * of synthetic big datasets with configurable data schema and dataset size
+ *
+ * @author  Evo Eftimov
+ **********************************************************************************************************************/
+
 object GenSynt {
 
   def main(args: Array[String]): Unit = {
