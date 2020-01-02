@@ -25,7 +25,7 @@ object GenSynt {
 
 
     //########################## Get the Parameters of the Job ##########################################
-    // Assuming that application.properties is in the root folder of your applicationval url = getClass.getResource("application.properties")
+    // Assuming that application.properties is in the root folder of the spark job
 
     val properties: Properties = new Properties()
 
