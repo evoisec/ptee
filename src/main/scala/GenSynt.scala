@@ -43,6 +43,8 @@ object GenSynt {
     println(tableName)
     val fileName = properties.getProperty("file.name")
     println(fileName)
+    val partitionName = properties.getProperty("partition.field.name")
+    println(partitionName)
 
     val hiveSupport = properties.getProperty("hive.support").toBoolean
     println(hiveSupport)
@@ -52,6 +54,15 @@ object GenSynt {
     println(storage)
     val format = properties.getProperty("format")
     println(format)
+
+    val nameStr = properties.getProperty("name.string.len").toInt
+    println(nameStr)
+    val addressStr = properties.getProperty("address.string.len").toInt
+    println(addressStr)
+    val ninInt = properties.getProperty("nin.int.len").toInt
+    println(ninInt)
+    val benInt = properties.getProperty("benefits.int.len").toInt
+    println(benInt)
 
     val initRec1 = properties.getProperty("initial.record.count1").toInt
     println(initRec1)
@@ -135,13 +146,12 @@ object GenSynt {
       d1 = d1.flatMap( x => (1 to innerIter2).map(_ => x) )
     }
 
-    d1 = d1.map(x => Row(Random.nextInt(1000), randomAlpha(4), Random.nextInt(1000), randomAlpha(8)))
+    d1 = d1.map(x => Row(Random.nextInt(ninInt), randomAlpha(nameStr), Random.nextInt(benInt), randomAlpha(addressStr)))
 
     //println(d1.collect().toList)
 
 
     val df = spark.sqlContext.createDataFrame(d1, schemaTyped)
-
 
     df.printSchema()
     df.show()
@@ -155,8 +165,6 @@ object GenSynt {
       df.write
         .mode("overwrite")
         .format(format)
-        //.partitionBy("dob")
-        //.saveAsTable(dbName + ".synt")
         .save(fileName)
 
     }
@@ -166,7 +174,7 @@ object GenSynt {
       df.write
         .mode("overwrite")
         .format(format)
-        .partitionBy("NIN")
+        .partitionBy(partitionName)
         .saveAsTable(dbName + "." + tableName)
 
     }
