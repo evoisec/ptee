@@ -88,7 +88,7 @@ object GenSynt {
 
     val sparkT = SparkSession.builder
       .master(master)
-      .appName("oltp-gdpr")
+      .appName("synt-gen")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
 
