@@ -35,27 +35,53 @@ object GenSynt {
       System.exit(0)
     }
 
-    val dbName = properties.getProperty("db.name")
-    println(dbName)
-    val initRec = properties.getProperty("initial.record.count").toInt
-    println(initRec)
-    val outerIter = properties.getProperty("outer.iterations").toInt
-    println(outerIter)
-    val innerIter = properties.getProperty("inner.iterations").toInt
-    println(innerIter)
     val master = properties.getProperty("master")
     println(master)
+    val dbName = properties.getProperty("db.name")
+    println(dbName)
+    val tableName = properties.getProperty("table.name")
+    println(tableName)
+    val fileName = properties.getProperty("file.name")
+    println(fileName)
+
+    val hiveSupport = properties.getProperty("hive.support").toBoolean
+    println(hiveSupport)
+    val parThreads = properties.getProperty("spark.parallel.threads").toInt
+    println(parThreads)
+    val storage = properties.getProperty("storage")
+    println(storage)
+    val format = properties.getProperty("format")
+    println(format)
+
+    val initRec1 = properties.getProperty("initial.record.count1").toInt
+    println(initRec1)
+    val outerIter1 = properties.getProperty("outer.iterations1").toInt
+    println(outerIter1)
+    val innerIter1 = properties.getProperty("inner.iterations1").toInt
+    println(innerIter1)
+
+    val outerIter2 = properties.getProperty("outer.iterations2").toInt
+    println(outerIter2)
+    val innerIter2 = properties.getProperty("inner.iterations2").toInt
+    println(innerIter2)
 
     //System.exit(0)
 
-    val spark = SparkSession.builder
+    val sparkT = SparkSession.builder
       .master(master)
       .appName("oltp-gdpr")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
-      //.config("spark.sql.warehouse.dir", "/opt/dwh")
-      //.enableHiveSupport()
-      .getOrCreate()
+
+
+     if (hiveSupport) {
+
+       sparkT.config("spark.sql.warehouse.dir", "/opt/dwh")
+       sparkT.enableHiveSupport()
+
+     }
+
+    val spark = sparkT.getOrCreate()
 
     import spark.implicits._
 
@@ -75,18 +101,18 @@ object GenSynt {
 
     var dd = (1 to 1)
     println(dd)
-    var ggg = dd.flatMap( x => (1 to initRec).map(_ => x) )
+    var ggg = dd.flatMap( x => (1 to initRec1).map(_ => x) )
     println(ggg)
-    for (b <- (1 to outerIter)){
+    for (b <- (1 to outerIter1)){
 
-      ggg = ggg.flatMap( x => (1 to innerIter).map(_ => x) )
+      ggg = ggg.flatMap( x => (1 to innerIter1).map(_ => x) )
       println(ggg)
 
     }
-    // num of internal iteration on the pwer of external iter times inital element count = total
+    // num of internal iteration on the power of external iter times inital element count = total
     println(ggg)
     println(ggg.length)
-    val kkk = ggg.map(x => Row(randomAlpha(4), Random.nextInt(1000)))
+    val kkk = ggg.map(x => Row(1))
     println(kkk)
     println(kkk.length)
 
@@ -102,11 +128,11 @@ object GenSynt {
 
     var rdd = spark.sparkContext.parallelize(kkk)
 
-    var d1 = rdd.repartition(2)
+    var d1 = rdd.repartition(parThreads)
 
-    for( i <- (0 to 1) )
+    for( i <- (1 to outerIter2) )
     {
-      d1 = d1.flatMap( x => (1 to 2).map(_ => x) )
+      d1 = d1.flatMap( x => (1 to innerIter2).map(_ => x) )
     }
 
     d1 = d1.map(x => Row(Random.nextInt(1000), randomAlpha(4), Random.nextInt(1000), randomAlpha(8)))
@@ -124,15 +150,26 @@ object GenSynt {
 
     //System.exit(0)
 
-    df.write
-      .mode("overwrite")
-      .format("csv")
-      //.partitionBy("dob")
-      //.saveAsTable(dbName + ".synt")
-      .save("/opt/synt.csv")
+    if(storage.equalsIgnoreCase("file")) {
 
-    //val dff = spark.sql("SELECT * FROM " + dbName + ".synt")
-    //dff.show()
+      df.write
+        .mode("overwrite")
+        .format(format)
+        //.partitionBy("dob")
+        //.saveAsTable(dbName + ".synt")
+        .save(fileName)
+
+    }
+
+    if(storage.equalsIgnoreCase("db")) {
+
+      df.write
+        .mode("overwrite")
+        .format(format)
+        .partitionBy("NIN")
+        .saveAsTable(dbName + "." + tableName)
+
+    }
 
   }
 
