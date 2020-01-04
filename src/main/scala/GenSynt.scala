@@ -71,6 +71,8 @@ object GenSynt {
     println(ninInt)
     val benInt = properties.getProperty("benefits.int.len").toInt
     println(benInt)
+    val accNameStr = properties.getProperty("accname.int.len").toInt
+    println(accNameStr)
 
     val initRec1 = properties.getProperty("initial.record.count1").toInt
     println(initRec1)
@@ -144,6 +146,8 @@ object GenSynt {
     schemaTyped = schemaTyped.add("NAME", "String", true)
     schemaTyped = schemaTyped.add("BENEFITS", IntegerType, true)
     schemaTyped = schemaTyped.add("ADDRESS", "String", true)
+    schemaTyped = schemaTyped.add("BALANCE", DoubleType, true)
+    schemaTyped = schemaTyped.add("ACC_NAME", "String", true)
 
     var rdd = spark.sparkContext.parallelize(kkk)
 
@@ -154,7 +158,7 @@ object GenSynt {
       d1 = d1.flatMap( x => (1 to innerIter2).map(_ => x) )
     }
 
-    d1 = d1.map(x => Row(Random.nextInt(ninInt), randomAlpha(nameStr), Random.nextInt(benInt), randomAlpha(addressStr)))
+    d1 = d1.map(x => Row(Random.nextInt(ninInt), randomAlpha(nameStr), Random.nextInt(benInt), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
 
     //println(d1.collect().toList)
 
@@ -173,6 +177,7 @@ object GenSynt {
       df.write
         .mode("overwrite")
         .format(format)
+        .option("header", "true")
         .save(fileName)
 
     }
