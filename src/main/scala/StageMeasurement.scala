@@ -17,12 +17,12 @@ object StageMeasurement {
 
     val properties: Properties = new Properties()
 
-    if (Files.exists(Paths.get("./dfsread.properties"))) {
-      val source = Source.fromURL("file:./dfsread.properties")
+    if (Files.exists(Paths.get("./stagemeasurements.properties"))) {
+      val source = Source.fromURL("file:./stagemeasurements.properties")
       properties.load(source.bufferedReader())
     }
-    else if (Files.exists(Paths.get("dfsread.properties"))) {
-      val source = Source.fromURL("file:dfsread.properties")
+    else if (Files.exists(Paths.get("stagemeasurements.properties"))) {
+      val source = Source.fromURL("file:stagemeasurements.properties")
       properties.load(source.bufferedReader())
     }
     else {
@@ -41,6 +41,10 @@ object StageMeasurement {
     println(parThreads)
     val fileFormat = properties.getProperty("format")
     println(fileFormat)
+    val partitioned = properties.getProperty("partitioned").toBoolean
+    println(partitioned)
+    val partitionName = properties.getProperty("partition.field.name")
+    println(partitionName)
 
 
     //System.exit(0)
@@ -114,6 +118,28 @@ object StageMeasurement {
     //result.printSchema()
 
     println(result.count())
+
+
+
+    if (partitioned) {
+
+      result.write
+        .mode("overwrite")
+        .format(fileFormat)
+        .option("header", "true")
+        .partitionBy(partitionName)
+        .save(fileName)
+
+    }
+    else {
+
+      result.write
+        .mode("overwrite")
+        .format(fileFormat)
+        .option("header", "true")
+        .save(fileName)
+
+    }
 
   }
 
