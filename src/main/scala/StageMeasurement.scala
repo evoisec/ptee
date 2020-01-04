@@ -98,7 +98,8 @@ object StageMeasurement {
     mainpartDF.printSchema()
 
     //************************************************************************************************************************
-    //perform some lightweight data processing operations to simulate reading of the dataset but without heavy data processing
+    //Controlled connection of successive Spark Job Stages, each implementing different algorithm, enabling the measurement
+    // of their data volume and data throughput and resource consumption - RAM and Disk I/O
     //************************************************************************************************************************
 
     //mainpartDF.show()
