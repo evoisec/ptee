@@ -51,6 +51,8 @@ object GenSynt {
     println(tableName)
     val fileName = properties.getProperty("file.name")
     println(fileName)
+    val partitioned = properties.getProperty("partitioned").toBoolean
+    println(partitioned)
     val partitionName = properties.getProperty("partition.field.name")
     println(partitionName)
 
@@ -106,6 +108,8 @@ object GenSynt {
 
     import spark.implicits._
 
+    //********************* Generate Synthetic Data from within the Spark Job *******************************
+
     def randomStringFromCharList(length: Int, chars: Seq[Char]): String = {
       val sb = new StringBuilder
       for (i <- 1 to length) {
@@ -142,6 +146,8 @@ object GenSynt {
 
     var schemaTyped = new StructType()
 
+    //************* The Schema of the Synthetic Data **************************************
+
     schemaTyped = schemaTyped.add("NIN", IntegerType, true)
     schemaTyped = schemaTyped.add("NAME", "String", true)
     schemaTyped = schemaTyped.add("BENEFITS", IntegerType, true)
@@ -172,23 +178,43 @@ object GenSynt {
 
     //System.exit(0)
 
+    //**************** Persist the Synthetic Data ****************************************
+
     if(storage.equalsIgnoreCase("file")) {
 
-      df.write
-        .mode("overwrite")
-        .format(format)
-        .option("header", "true")
-        .save(fileName)
+      if (partitioned) {
+
+        df.write
+          .mode("overwrite")
+          .format(format)
+          .option("header", "true")
+          .partitionBy(partitionName)
+          .save(fileName)
+
+      }
+      else {
+
+        df.write
+          .mode("overwrite")
+          .format(format)
+          .option("header", "true")
+          .save(fileName)
+
+      }
 
     }
 
     if(storage.equalsIgnoreCase("db")) {
 
-      df.write
-        .mode("overwrite")
-        .format(format)
-        .partitionBy(partitionName)
-        .saveAsTable(dbName + "." + tableName)
+      if (partitioned) {
+
+        df.write
+          .mode("overwrite")
+          .format(format)
+          .partitionBy(partitionName)
+          .saveAsTable(dbName + "." + tableName)
+
+      }
 
     }
 
