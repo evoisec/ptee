@@ -215,6 +215,14 @@ object GenSynt {
           .saveAsTable(dbName + "." + tableName)
 
       }
+      else{
+
+        df.write
+          .mode("overwrite")
+          .format(format)
+          .saveAsTable(dbName + "." + tableName)
+
+      }
 
     }
 
