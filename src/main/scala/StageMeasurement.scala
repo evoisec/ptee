@@ -1,7 +1,7 @@
 import java.nio.file.{Files, Paths}
 import java.util.Properties
 
-import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
+import org.apache.spark.sql.{Column, DataFrame, RelationalGroupedDataset, Row, SparkSession}
 
 import scala.io.Source
 import org.apache.spark.sql.functions._
@@ -47,7 +47,7 @@ object StageMeasurement {
     println(partitioned)
     val partitionName = properties.getProperty("partition.field.name")
     println(partitionName)
-    val stageNumber = properties.getProperty("stage.number")
+    val stageNumber = properties.getProperty("stage.number").toInt
     println(stageNumber)
 
 
@@ -123,6 +123,36 @@ object StageMeasurement {
 
     println(result.count())
 
+
+    var result1 : RelationalGroupedDataset = null
+
+    if (stageNumber == 0){
+      //do nothing - this is a direct input to output pipeline
+    }
+    else{
+
+      if (stageNumber >= 1){
+
+        println("Starting Stage 1")
+
+        result1 = result.groupBy("NIN")
+        println(result1.count().show())
+
+      }
+      if (stageNumber >= 2){
+
+        println("Starting Stage 2")
+        result.repartition(parThreads)
+
+      }
+      if (stageNumber >= 3){
+
+        println("Starting Stage 3")
+
+
+      }
+
+    }
 
 
     if (partitioned) {
