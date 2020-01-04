@@ -35,6 +35,8 @@ object StageMeasurement {
     println(master)
     val fileName = properties.getProperty("input.file.name")
     println(fileName)
+    val outFileName = properties.getProperty("output.file.name")
+    println(outFileName)
     val hiveSupport = properties.getProperty("hive.support").toBoolean
     println(hiveSupport)
     val parThreads = properties.getProperty("spark.parallel.threads").toInt
@@ -45,6 +47,8 @@ object StageMeasurement {
     println(partitioned)
     val partitionName = properties.getProperty("partition.field.name")
     println(partitionName)
+    val stageNumber = properties.getProperty("stage.number")
+    println(stageNumber)
 
 
     //System.exit(0)
@@ -128,7 +132,7 @@ object StageMeasurement {
         .format(fileFormat)
         .option("header", "true")
         .partitionBy(partitionName)
-        .save(fileName)
+        .save(outFileName)
 
     }
     else {
@@ -137,7 +141,7 @@ object StageMeasurement {
         .mode("overwrite")
         .format(fileFormat)
         .option("header", "true")
-        .save(fileName)
+        .save(outFileName)
 
     }
 
