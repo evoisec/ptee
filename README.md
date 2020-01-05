@@ -1,5 +1,5 @@
 # ptee
-Hadoop Performance Testing Suite - Business Level Workload Emulation, while remaining Close to the Metal - Scala Based
+Hadoop Performance Testing & Measurement Suite - Business Level Workload Emulation, while remaining Close to the Metal - Scala Based
 
 There is a lack of modern, business level tools for workload performance testing on Hadoop. Carried on by inertia, the majority 
 of the IT industry is still using archaic, outadted "benchmarks" the majority of which are writtent in Map Reduce 
