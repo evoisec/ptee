@@ -1,6 +1,7 @@
 import java.nio.file.{Files, Paths}
 import java.util.Properties
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, RelationalGroupedDataset, Row, SparkSession}
 
 import scala.io.Source
@@ -117,7 +118,7 @@ object StageMeasurement {
 
     mainpartDF.createOrReplaceTempView("perftest")
 
-    val result = spark.sql("SELECT * FROM perftest")
+    var result = spark.sql("SELECT * FROM perftest")
 
     //result.show()
     //result.printSchema()
@@ -132,24 +133,30 @@ object StageMeasurement {
     }
     else{
 
+      var sss : RDD[(Any, Iterable[Row])] = null
+
       if (stageNumber >= 1){
 
         println("Starting Stage 1")
 
-        result1 = result.groupBy("NIN")
-        println(result1.count().show())
+        //result1 = result.groupBy("NIN")
+        //println(result1.count().show())
+
+        sss = result.rdd.groupBy(x => x(0))
+        sss.count()
+
 
       }
       if (stageNumber >= 2){
 
         println("Starting Stage 2")
-        result.repartition(parThreads)
+        result.rdd.groupBy(x => x(4)).count()
 
       }
       if (stageNumber >= 3){
 
         println("Starting Stage 3")
-
+        result = result.repartition(parThreads)
 
       }
 
