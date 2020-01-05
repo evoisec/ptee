@@ -42,12 +42,6 @@ object RDBMSTester {
     println(parThreads)
     val fileFormat = properties.getProperty("format")
     println(fileFormat)
-    val partitioned = properties.getProperty("partitioned").toBoolean
-    println(partitioned)
-    val partitionName = properties.getProperty("partition.field.name")
-    println(partitionName)
-    val stageNumber = properties.getProperty("stage.number").toInt
-    println(stageNumber)
     val dbMode = properties.getProperty("db.mode")
     println(dbMode)
 
