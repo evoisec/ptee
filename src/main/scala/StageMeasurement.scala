@@ -56,7 +56,7 @@ object StageMeasurement {
 
     val sparkT = SparkSession.builder
       .master(master)
-      .appName("dfs-read")
+      .appName("stage-measurement")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
 
