@@ -146,7 +146,7 @@ object GenSynt {
 
     var schemaTyped = new StructType()
 
-    //************* The Schema of the Synthetic Data **************************************
+    //************* The Schema of the Synthetic Dataset **************************************
 
     schemaTyped = schemaTyped.add("NIN", IntegerType, true)
     schemaTyped = schemaTyped.add("NAME", "String", true)
