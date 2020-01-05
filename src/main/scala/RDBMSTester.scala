@@ -2,6 +2,7 @@ import java.nio.file.{Files, Paths}
 import java.util.Properties
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.col
 
 import scala.io.Source
 
@@ -47,6 +48,8 @@ object RDBMSTester {
     println(partitionName)
     val stageNumber = properties.getProperty("stage.number").toInt
     println(stageNumber)
+    val dbMode = properties.getProperty("db.mode")
+    println(dbMode)
 
     val sparkT = SparkSession.builder
       .master(master)
@@ -62,13 +65,19 @@ object RDBMSTester {
 
     val spark = sparkT.getOrCreate()
 
-    val jdbcDF = spark.read
-      .format("jdbc")
-      .option("url", "jdbc:postgresql:dbserver")
-      .option("dbtable", "schema.tablename")
-      .option("user", "username")
-      .option("password", "password")
-      .load()
+    if(dbMode.equalsIgnoreCase("readtest")) {
+
+      var jdbcDF = spark.read
+        .format("jdbc")
+        .option("url", "jdbc:postgresql:dbserver")
+        .option("dbtable", "schema.tablename")
+        .option("user", "username")
+        .option("password", "password")
+        .load().repartition(parThreads)
+
+      jdbcDF.withColumn("NIN", col("NIN") + 1).count()
+
+    }
 
     /*
     val connectionProperties = new Properties()
@@ -83,6 +92,32 @@ object RDBMSTester {
       .jdbc("jdbc:postgresql:dbserver", "schema.tablename", connectionProperties)
     */
 
+
+    if(dbMode.equalsIgnoreCase("writetest")) {
+
+      // Saving data to a JDBC source
+     /* var jdbcDF
+      .write
+        .format("jdbc")
+        .option("url", "jdbc:postgresql:dbserver")
+        .option("dbtable", "schema.tablename")
+        .option("user", "username")
+        .option("password", "password")
+        .save()
+      */
+
+    }
+
+    /*
+    jdbcDF2.write
+      .jdbc("jdbc:postgresql:dbserver", "schema.tablename", connectionProperties)
+
+    // Specifying create table column data types on write
+    jdbcDF.write
+      .option("createTableColumnTypes", "name CHAR(64), comments VARCHAR(1024)")
+      .jdbc("jdbc:postgresql:dbserver", "schema.tablename", connectionProperties)
+
+     */
 
   }
 }
