@@ -78,7 +78,12 @@ object RDBMSTester {
         .option("password", dbPassword)
         .load().repartition(parThreads)
 
+
+      //perform-simulate some simple data processing with the db query result set
+      jdbcDF = jdbcDF.withColumn("NIN", col("NIN") + 1)
+
       println(jdbcDF.count())
+      jdbcDF.show()
 
     }
 
