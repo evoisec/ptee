@@ -63,13 +63,13 @@ object RDBMSTester {
 
       var jdbcDF = spark.read
         .format("jdbc")
-        .option("url", "jdbc:postgresql:dbserver")
-        .option("dbtable", "schema.tablename")
-        .option("user", "username")
-        .option("password", "password")
+        .option("url", "jdbc:postgresql://localhost:5432/perftesting")
+        .option("dbtable", "citizen")
+        .option("user", "evo")
+        .option("password", "Pwd1234")
         .load().repartition(parThreads)
 
-      jdbcDF.withColumn("NIN", col("NIN") + 1).count()
+      println(jdbcDF.count())
 
     }
 
