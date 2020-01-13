@@ -45,6 +45,15 @@ object RDBMSTester {
     val dbMode = properties.getProperty("db.mode")
     println(dbMode)
 
+    val dbServer = properties.getProperty("db.server.jdbc.url")
+    println(dbServer)
+    val dbTableName = properties.getProperty("db.table.name")
+    println(dbTableName)
+    val dbUser = properties.getProperty("db.username")
+    println(dbUser)
+    val dbPassword = properties.getProperty("db.password")
+    println(dbPassword)
+
     val sparkT = SparkSession.builder
       .master(master)
       .appName("rdbms-tester")
@@ -63,10 +72,10 @@ object RDBMSTester {
 
       var jdbcDF = spark.read
         .format("jdbc")
-        .option("url", "jdbc:postgresql://localhost:5432/perftesting")
-        .option("dbtable", "citizen")
-        .option("user", "evo")
-        .option("password", "Pwd1234")
+        .option("url", "jdbc:postgresql:" + dbServer)
+        .option("dbtable", dbTableName)
+        .option("user", dbUser)
+        .option("password", dbPassword)
         .load().repartition(parThreads)
 
       println(jdbcDF.count())
