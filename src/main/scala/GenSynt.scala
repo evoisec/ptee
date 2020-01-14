@@ -11,6 +11,8 @@ import org.apache.spark.sql.types.{DoubleType, StringType, IntegerType, StructFi
 import scala.io.Source
 import scala.util.Random
 
+import java.util.UUID.randomUUID
+
 /**********************************************************************************************************************
  *
  * Spark Job for scalable generation (leverages the parallel compute power of the entire Hadoop Cluster)
@@ -150,7 +152,7 @@ object GenSynt {
 
     schemaTyped = schemaTyped.add("NIN", IntegerType, true)
     schemaTyped = schemaTyped.add("NAME", "String", true)
-    schemaTyped = schemaTyped.add("BENEFITS", IntegerType, true)
+    schemaTyped = schemaTyped.add("BENEFITS", DoubleType, true)
     schemaTyped = schemaTyped.add("ADDRESS", "String", true)
     schemaTyped = schemaTyped.add("BALANCE", DoubleType, true)
     schemaTyped = schemaTyped.add("ACC_NAME", "String", true)
@@ -164,7 +166,7 @@ object GenSynt {
       d1 = d1.flatMap( x => (1 to innerIter2).map(_ => x) )
     }
 
-    d1 = d1.map(x => Row(Random.nextInt(ninInt), randomAlpha(nameStr), Random.nextInt(benInt), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
+    d1 = d1.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
 
     //println(d1.collect().toList)
 
