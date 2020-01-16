@@ -87,6 +87,7 @@ object DFSRead {
     }
 
     mainpartDF.printSchema()
+    mainpartDF.show()
 
     //************************************************************************************************************************
     //perform some lightweight data processing operations to simulate reading of the dataset but without heavy data processing
