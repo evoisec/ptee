@@ -155,7 +155,6 @@ object StageMeasurement {
         sss = result.rdd.groupBy(x => x(0))
         sss.count()
 
-
       }
       if (stageNumber >= 2){
 
