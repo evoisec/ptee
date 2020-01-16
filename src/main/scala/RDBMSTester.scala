@@ -6,6 +6,13 @@ import org.apache.spark.sql.functions.col
 
 import scala.io.Source
 
+/**********************************************************************************************************************
+ *
+ * Spark Job for performance measurement of dataset ingestion from RDBMS, when running at scale
+ *
+ * @author  Evo Eftimov
+ **********************************************************************************************************************/
+
 object RDBMSTester {
 
   def main(args: Array[String]): Unit = {
