@@ -10,6 +10,8 @@ import org.apache.spark.sql.functions._
 /**********************************************************************************************************************
  *
  * Spark Job for performance measurement of various Data Shuffling Scenarios, between Job Stages and when running at scale
+ * Features controlled chaining of successive Spark Job Stages, each implementing different Data Shuffling Scenario, enabling the measurement
+ * of their resulting data volume (ie during shuffling), data throughput and resource consumption - Network IO, RAM and Disk I/O
  *
  * @author  Evo Eftimov
  **********************************************************************************************************************/
@@ -107,7 +109,7 @@ object StageMeasurement {
     mainpartDF.show()
 
     //************************************************************************************************************************
-    //Controlled chaining of successive Spark Job Stages, each implementing different Data Shuffling Scenario, enabling the measurement
+    // Begin controlled chaining of successive Spark Job Stages, each implementing different Data Shuffling Scenario, enabling the measurement
     // of their resulting data volume (ie during shuffling), data throughput and resource consumption - Network IO, RAM and Disk I/O
     //************************************************************************************************************************
 
