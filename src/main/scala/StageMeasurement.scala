@@ -7,6 +7,13 @@ import org.apache.spark.sql.{Column, DataFrame, RelationalGroupedDataset, Row, S
 import scala.io.Source
 import org.apache.spark.sql.functions._
 
+/**********************************************************************************************************************
+ *
+ * Spark Job for performance measurement of various Data Shuffling Scenarios, between Job Stages
+ *
+ * @author  Evo Eftimov
+ **********************************************************************************************************************/
+
 object StageMeasurement {
 
 
@@ -97,6 +104,7 @@ object StageMeasurement {
     }
 
     mainpartDF.printSchema()
+    mainpartDF.show()
 
     //************************************************************************************************************************
     //Controlled connection of successive Spark Job Stages, each implementing different algorithm, enabling the measurement
