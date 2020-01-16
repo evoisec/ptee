@@ -6,11 +6,10 @@ import PII.getClass
 import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DoubleType, StringType, IntegerType, StructField, StructType}
+import org.apache.spark.sql.types.{DecimalType, DoubleType, IntegerType, LongType, StringType, StructField, StructType}
 
 import scala.io.Source
 import scala.util.Random
-
 import java.util.UUID.randomUUID
 
 /**********************************************************************************************************************
@@ -149,7 +148,9 @@ object GenSynt {
 
     //************* The Schema of the Synthetic Dataset **************************************
 
-    schemaTyped = schemaTyped.add("NIN", IntegerType, true)
+    schemaTyped = schemaTyped.add("NIN", LongType, true)
+    //schemaTyped = schemaTyped.add("NIN", IntegerType, true)
+    //schemaTyped = schemaTyped.add("NIN", "String", true)
     schemaTyped = schemaTyped.add("NAME", "String", true)
     schemaTyped = schemaTyped.add("BENEFITS", DoubleType, true)
     schemaTyped = schemaTyped.add("ADDRESS", "String", true)
@@ -158,19 +159,22 @@ object GenSynt {
 
     var rdd = spark.sparkContext.parallelize(kkk)
 
-    var d1 = rdd.repartition(parThreads)
+    var dataRow = rdd.repartition(parThreads)
 
     for( i <- (1 to outerIter2) )
     {
-      d1 = d1.flatMap( x => (1 to innerIter2).map(_ => x) )
+      dataRow = dataRow.flatMap( x => (1 to innerIter2).map(_ => x) )
     }
 
-    d1 = d1.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
+    //Several Data Row Schemas available
+    //dataRow = d1.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
+    //dataRow = d1.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
+    dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
 
     //println(d1.collect().toList)
 
 
-    val df = spark.sqlContext.createDataFrame(d1, schemaTyped)
+    val df = spark.sqlContext.createDataFrame(dataRow, schemaTyped)
 
     df.printSchema()
     df.show()
