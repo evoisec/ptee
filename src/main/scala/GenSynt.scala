@@ -145,7 +145,6 @@ object GenSynt {
 
     //System.exit(0)
 
-
     var schemaTyped = new StructType()
 
     //************* The Schema of the Synthetic Dataset **************************************
