@@ -9,7 +9,7 @@ import org.apache.spark.sql.functions._
 
 /**********************************************************************************************************************
  *
- * Spark Job for performance measurement of various Data Shuffling Scenarios, between Job Stages
+ * Spark Job for performance measurement of various Data Shuffling Scenarios, between Job Stages and when running at scale
  *
  * @author  Evo Eftimov
  **********************************************************************************************************************/
