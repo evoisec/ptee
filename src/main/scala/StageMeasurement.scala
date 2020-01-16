@@ -107,8 +107,8 @@ object StageMeasurement {
     mainpartDF.show()
 
     //************************************************************************************************************************
-    //Controlled connection of successive Spark Job Stages, each implementing different algorithm, enabling the measurement
-    // of their data volume and data throughput and resource consumption - RAM and Disk I/O
+    //Controlled chaining of successive Spark Job Stages, each implementing different Data Shuffling Scenario, enabling the measurement
+    // of their resulting data volume (ie during shuffling), data throughput and resource consumption - Network IO, RAM and Disk I/O
     //************************************************************************************************************************
 
     //mainpartDF.show()
