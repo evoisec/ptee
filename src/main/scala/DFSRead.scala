@@ -6,6 +6,14 @@ import org.apache.spark.sql.{Column, DataFrame, Row, SparkSession}
 import scala.io.Source
 import org.apache.spark.sql.functions._
 
+/**********************************************************************************************************************
+ *
+ * Spark Job for simulation of parallel, high throughput Data Read operations on synthetic datasets with specific
+ * realistic, business schemas
+ *
+ * @author  Evo Eftimov
+ **********************************************************************************************************************/
+
 object DFSRead {
 
   def main(args: Array[String]): Unit = {
