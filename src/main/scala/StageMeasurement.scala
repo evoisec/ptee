@@ -165,6 +165,16 @@ object StageMeasurement {
         o = mainpartDF.groupBy("NIN").sum("BENEFITS")
         o.show()
 
+        var i = mainpartDF.cube($"NIN", $"ADDRESS").agg(Map(
+          "BENEFITS" -> "avg",
+          "BALANCE" -> "max"
+        ))
+        i.show()
+
+        mainpartDF.stat.freqItems(Seq("NIN")).show(100)
+
+        mainpartDF.withColumn("new_column", lit(10)).show()
+
 
       }
       if (stageNumber >= 2){
