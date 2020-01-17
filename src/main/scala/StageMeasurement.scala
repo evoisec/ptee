@@ -152,6 +152,8 @@ object StageMeasurement {
         //result1 = result.groupBy("NIN")
         //println(result1.count().show())
 
+        result.groupBy("NIN").count().show()
+
         sss = result.rdd.groupBy(x => x(0))
         sss.count()
 
