@@ -166,7 +166,7 @@ object GenSynt {
       dataRow = dataRow.flatMap( x => (1 to innerIter2).map(_ => x) )
     }
 
-    //Several Data Row Schemas available
+    //Several Data Row Schemas available for tests
     //dataRow = d1.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
     //dataRow = d1.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
     dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
