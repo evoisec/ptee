@@ -157,6 +157,15 @@ object StageMeasurement {
         sss = result.rdd.groupBy(x => x(0))
         sss.count()
 
+
+        var o = result.groupBy("NIN").agg(sum(mainpartDF.col("BENEFITS")))
+        o.show()
+        o = mainpartDF.groupBy("NIN").count().sort($"count".desc)
+        o.show()
+        o = mainpartDF.groupBy("NIN").sum("BENEFITS")
+        o.show()
+
+
       }
       if (stageNumber >= 2){
 
