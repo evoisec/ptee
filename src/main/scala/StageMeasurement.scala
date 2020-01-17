@@ -175,6 +175,13 @@ object StageMeasurement {
 
         mainpartDF.withColumn("new_column", lit(10)).show()
 
+        var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(0.9, 0.1));
+        var trainingData = splits(0);
+        println("Number of training sequences = " + trainingData.count());
+        var testData = splits(1);
+        println("Number of test sequences = " + testData.count());
+        testData.show(100)
+
 
       }
       if (stageNumber >= 2){
