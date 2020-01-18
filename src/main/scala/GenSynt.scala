@@ -184,8 +184,8 @@ object GenSynt {
 
     //Several Data Row Schemas available for tests
     dataRow = dataRow.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
-    //dataRow = d1.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
-    //dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
+    //dataRow = d1.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
+    //dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
 
     //println(d1.collect().toList)
 
