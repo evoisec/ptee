@@ -5,8 +5,7 @@ import java.util.Properties
 
 import PII.getClass
 import org.apache.avro.generic.GenericData.StringType
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types.{DateType, DecimalType, DoubleType, IntegerType, LongType, StringType, StructField, StructType}
 
 import scala.io.Source
@@ -196,6 +195,13 @@ object GenSynt {
     df.show()
 
     println(df.count())
+
+    var splits: Array[DataFrame] = df.randomSplit(Array(0.9, 0.1));
+    var trainingData = splits(0);
+    println("Number of training sequences = " + trainingData.count());
+    var testData = splits(1);
+    println("Number of test sequences = " + testData.count());
+    testData.show(100)
 
     //System.exit(0)
 
