@@ -18,6 +18,46 @@ import org.apache.spark.sql.functions._
 
 object StageMeasurement {
 
+  def stageRunner(stage: String, field: String): Unit = {
+
+    if (stage.equalsIgnoreCase("GROUP")){
+
+      println("Executing Stage: " + stage)
+
+      println(stage)
+      println(field)
+
+    }
+
+    if (stage.equalsIgnoreCase("JOIN")){
+
+      println("Executing Stage: " + stage)
+
+      println(stage)
+      println(field)
+
+    }
+
+    if (stage.equalsIgnoreCase("POP")){
+
+      println("Executing Stage: " + stage)
+
+      println(stage)
+      println(field)
+
+    }
+
+    if (stage.equalsIgnoreCase("WRITE")){
+
+      println("Executing Stage: " + stage)
+
+      println(stage)
+      println(field)
+
+    }
+
+  }
+
 
   def main(args: Array[String]): Unit = {
 
@@ -59,6 +99,9 @@ object StageMeasurement {
     println(partitionName)
     val stageNumber = properties.getProperty("stage.number").toInt
     println(stageNumber)
+
+    var stageFlow = properties.getProperty("stage.flow")
+    println(stageFlow)
 
 
     //System.exit(0)
@@ -135,6 +178,29 @@ object StageMeasurement {
     //result.printSchema()
 
     println(result.count())
+
+
+    //************************************************************************************
+
+    stageFlow = stageFlow.replaceAll("\\s", "")
+    println(stageFlow)
+    val stages = stageFlow.split(",")
+
+    for (i <- stages){
+
+      //println(i)
+      val s = i.split(":")
+
+      if (s.length > 1)
+        stageRunner(s(0), s(1))
+      else
+        stageRunner(s(0), "")
+
+    }
+
+    //************************************************************************************
+
+
 
 
     var result1 : RelationalGroupedDataset = null
