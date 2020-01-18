@@ -1,16 +1,21 @@
 import java.io.FileNotFoundException
 import java.nio.file.{Files, Paths}
+import java.sql.Date
 import java.util.Properties
 
 import PII.getClass
 import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DecimalType, DoubleType, IntegerType, LongType, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{DateType, DecimalType, DoubleType, IntegerType, LongType, StringType, StructField, StructType}
 
 import scala.io.Source
 import scala.util.Random
 import java.util.UUID.randomUUID
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
+
+import scala.util.Random
 
 /**********************************************************************************************************************
  *
@@ -21,6 +26,12 @@ import java.util.UUID.randomUUID
  **********************************************************************************************************************/
 
 object GenSynt {
+
+  def random(from: LocalDate, to: LocalDate): LocalDate = {
+    val diff = DAYS.between(from, to)
+    val random = new Random(System.nanoTime) // You may want a different seed
+    from.plusDays(random.nextInt(diff.toInt))
+  }
 
   def main(args: Array[String]): Unit = {
 
@@ -148,14 +159,15 @@ object GenSynt {
 
     //************* The Schema of the Synthetic Dataset **************************************
 
-    schemaTyped = schemaTyped.add("NIN", LongType, true)
-    //schemaTyped = schemaTyped.add("NIN", IntegerType, true)
+    //schemaTyped = schemaTyped.add("NIN", LongType, true)
+    schemaTyped = schemaTyped.add("NIN", IntegerType, true)
     //schemaTyped = schemaTyped.add("NIN", "String", true)
     schemaTyped = schemaTyped.add("NAME", "String", true)
     schemaTyped = schemaTyped.add("BENEFITS", DoubleType, true)
     schemaTyped = schemaTyped.add("ADDRESS", "String", true)
     schemaTyped = schemaTyped.add("BALANCE", DoubleType, true)
     schemaTyped = schemaTyped.add("ACC_NAME", "String", true)
+    schemaTyped = schemaTyped.add("DATE", DateType, true)
 
     var rdd = spark.sparkContext.parallelize(kkk)
 
@@ -166,10 +178,14 @@ object GenSynt {
       dataRow = dataRow.flatMap( x => (1 to innerIter2).map(_ => x) )
     }
 
+
+    val from = LocalDate.of(2018, 1, 1)
+    val to = LocalDate.of(2020, 1, 1)
+
     //Several Data Row Schemas available for tests
-    //dataRow = d1.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
+    dataRow = dataRow.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
     //dataRow = d1.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
-    dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
+    //dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr)))
 
     //println(d1.collect().toList)
 
