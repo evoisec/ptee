@@ -82,6 +82,7 @@ object StageMeasurement {
     import spark.implicits._
 
     var mainpartDF : DataFrame = null
+    var mainpartDF2 : DataFrame = null
 
     if (fileFormat.equalsIgnoreCase("csv")) {
 
@@ -182,6 +183,7 @@ object StageMeasurement {
         println("Number of test sequences = " + testData.count());
         testData.show(100)
 
+        //simulate Join based Shuffling and Stage Boundary
         mainpartDF.join(mainpartDF2, "NIN").show(100000)
 
 
