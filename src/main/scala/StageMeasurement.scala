@@ -182,6 +182,8 @@ object StageMeasurement {
         println("Number of test sequences = " + testData.count());
         testData.show(100)
 
+        mainpartDF.join(mainpartDF2, "NIN").show(100000)
+
 
       }
       if (stageNumber >= 2){
