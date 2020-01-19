@@ -44,9 +44,51 @@ object RandomDSSplitter {
   println(partitioned)
   val partitionName = properties.getProperty("partition.field.name")
   println(partitionName)
-  val stageNumber = properties.getProperty("stage.number").toInt
-  println(stageNumber)
 
+
+  val sparkT = SparkSession.builder
+    .master(master)
+    .appName("random-ds-splitter")
+    //put here any required param controlling Vectorization (see all available params listed at the beginning)
+    .config("spark.sql.parquet.enableVectorizedReader ", "true")
+
+
+  if (hiveSupport) {
+
+    sparkT.config("spark.sql.warehouse.dir", "/opt/dwh")
+    sparkT.enableHiveSupport()
+
+  }
+
+  val spark = sparkT.getOrCreate()
+
+  var mainpartDF : DataFrame = null
+  var mainpartDF2 : DataFrame = null
+
+  if (fileFormat.equalsIgnoreCase("csv")) {
+
+    mainpartDF = spark.read.format("csv")
+      .option("sep", ",")
+      .option("inferSchema", "true")
+      .option("header", "true")
+      .load(fileName)
+      .repartition(parThreads)
+
+  }
+
+  if (fileFormat.equalsIgnoreCase("parquet")) {
+
+    mainpartDF = spark.read.format("parquet")
+      //.option("sep", ",")
+      //.option("inferSchema", "true")
+      .option("header", "true")
+      .load(fileName)
+      .repartition(parThreads)
+
+  }
+
+  mainpartDF.printSchema()
+  mainpartDF.show()
 
 
 }
