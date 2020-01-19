@@ -63,11 +63,11 @@ object StageMeasurement {
       println(field)
 
       //simulate Join based Shuffling and Stage Boundary
-      df1.join(df2, field).show()
+      val r = df1.join(df2, field)
 
       if (partitioned) {
 
-        df1.write
+        r.write
           .mode("overwrite")
           .format(fileFormat)
           .option("header", "true")
@@ -77,7 +77,7 @@ object StageMeasurement {
       }
       else {
 
-        df1.write
+        r.write
           .mode("overwrite")
           .format(fileFormat)
           .option("header", "true")
