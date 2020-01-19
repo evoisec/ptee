@@ -50,6 +50,9 @@ object RandomDSSplitter {
     val splitRatio = properties.getProperty("split.ratio").toDouble
     println(splitRatio)
 
+    val datePresent = properties.getProperty("date.present").toBoolean
+    println(datePresent)
+
 
     val sparkT = SparkSession.builder
       .master(master)
@@ -101,6 +104,9 @@ object RandomDSSplitter {
     var testData = splits(1);
     println("Number of test feature vectors = " + testData.count());
     testData.show(100)
+
+    if (datePresent)
+      testData = testData.withColumn("DATE", col("DATE").cast("date"))
 
     if (partitioned) {
 
