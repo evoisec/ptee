@@ -47,6 +47,9 @@ object RandomDSSplitter {
     val partitionName = properties.getProperty("partition.field.name")
     println(partitionName)
 
+    val splitRatio = properties.getProperty("split.ratio").toDouble
+    println(splitRatio)
+
 
     val sparkT = SparkSession.builder
       .master(master)
@@ -92,7 +95,7 @@ object RandomDSSplitter {
     mainpartDF.show()
 
 
-    var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(0.9, 0.1));
+    var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(1-splitRatio, splitRatio));
     var trainingData = splits(0);
     println("Number of training feature vectors = " + trainingData.count());
     var testData = splits(1);
