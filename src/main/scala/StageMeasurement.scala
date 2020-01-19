@@ -18,7 +18,7 @@ import org.apache.spark.sql.functions._
 
 object StageMeasurement {
 
-  def stageRunner(stage: String, field: String): Unit = {
+  def stageRunner(stage: String, field: String, df1: DataFrame, df2: DataFrame): Unit = {
 
     if (stage.equalsIgnoreCase("GROUP")){
 
@@ -26,6 +26,8 @@ object StageMeasurement {
 
       println(stage)
       println(field)
+
+      df1.groupBy(field).sum("BENEFITS").count()
 
     }
 
@@ -36,14 +38,23 @@ object StageMeasurement {
       println(stage)
       println(field)
 
+      //simulate Join based Shuffling and Stage Boundary
+      df1.join(df2, field).show()
+
     }
 
-    if (stage.equalsIgnoreCase("POP")){
+    if (stage.equalsIgnoreCase("CUBE")){
 
       println("Executing Stage: " + stage)
 
       println(stage)
       println(field)
+
+      var i = df1.cube(col(field), col("ADDRESS")).agg(Map(
+        "BENEFITS" -> "avg",
+        "BALANCE" -> "max"
+      ))
+      i.show()
 
     }
 
@@ -192,83 +203,15 @@ object StageMeasurement {
       val s = i.split(":")
 
       if (s.length > 1)
-        stageRunner(s(0), s(1))
+        stageRunner(s(0), s(1), mainpartDF, mainpartDF2)
       else
-        stageRunner(s(0), "")
+        stageRunner(s(0), "", mainpartDF, mainpartDF2)
 
     }
 
-    //************************************************************************************
 
 
-
-
-    var result1 : RelationalGroupedDataset = null
-
-    if (stageNumber == 0){
-      //do nothing - this is a direct input to output pipeline
-    }
-    else{
-
-      var sss : RDD[(Any, Iterable[Row])] = null
-
-      if (stageNumber >= 1){
-
-        println("Starting Stage 1")
-
-        //result1 = result.groupBy("NIN")
-        //println(result1.count().show())
-
-        result.groupBy("NIN").count().show()
-
-        sss = result.rdd.groupBy(x => x(0))
-        sss.count()
-
-
-        var o = result.groupBy("NIN").agg(sum(mainpartDF.col("BENEFITS")))
-        o.show()
-        o = mainpartDF.groupBy("NIN").count().sort($"count".desc)
-        o.show()
-        o = mainpartDF.groupBy("NIN").sum("BENEFITS")
-        o.show()
-
-        var i = mainpartDF.cube($"NIN", $"ADDRESS").agg(Map(
-          "BENEFITS" -> "avg",
-          "BALANCE" -> "max"
-        ))
-        i.show()
-
-        mainpartDF.stat.freqItems(Seq("NIN")).show(100)
-
-        mainpartDF.withColumn("new_column", lit(10)).show()
-
-        var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(0.9, 0.1));
-        var trainingData = splits(0);
-        println("Number of training sequences = " + trainingData.count());
-        var testData = splits(1);
-        println("Number of test sequences = " + testData.count());
-        testData.show(100)
-
-        //simulate Join based Shuffling and Stage Boundary
-        mainpartDF.join(mainpartDF2, "NIN").show(100000)
-
-
-      }
-      if (stageNumber >= 2){
-
-        println("Starting Stage 2")
-        result.rdd.groupBy(x => x(4)).count()
-
-      }
-      if (stageNumber >= 3){
-
-        println("Starting Stage 3")
-        result = result.repartition(parThreads)
-
-      }
-
-    }
-
+    //**************************************************************************************
 
     if (partitioned) {
 
