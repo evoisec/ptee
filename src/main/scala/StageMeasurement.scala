@@ -28,6 +28,7 @@ object StageMeasurement {
   var partitioned: Boolean = false
   var partitionName: String = null
   var stageFlow: String = null
+  var datePresent: Boolean = true
 
   def stageRunner(stage: String, field: String, df1: DataFrame, df2: DataFrame): Unit = {
 
@@ -144,6 +145,8 @@ object StageMeasurement {
     println(partitionName)
     stageFlow = properties.getProperty("stage.flow")
     println(stageFlow)
+    datePresent = properties.getProperty("date.present").toBoolean
+    println(datePresent)
 
 
     //System.exit(0)
@@ -205,6 +208,14 @@ object StageMeasurement {
           .load(fileNameJoin)
           .repartition(parThreads)
 
+    }
+
+
+    if (datePresent) {
+      mainpartDF = mainpartDF.withColumn("DATE", col("DATE").cast("date"))
+
+      if(mainpartDF2 != null)
+        mainpartDF2 = mainpartDF2.withColumn("DATE", col("DATE").cast("date"))
     }
 
     mainpartDF.printSchema()
