@@ -18,6 +18,17 @@ import org.apache.spark.sql.functions._
 
 object StageMeasurement {
 
+  var master: String = null
+  var fileName: String = null
+  var fileNameJoin: String = null
+  var outFileName: String = null
+  var hiveSupport: Boolean = true
+  var parThreads: Integer = 2
+  var fileFormat: String = null
+  var partitioned: Boolean = false
+  var partitionName: String = null
+  var stageFlow: String = null
+
   def stageRunner(stage: String, field: String, df1: DataFrame, df2: DataFrame): Unit = {
 
     if (stage.equalsIgnoreCase("GROUP")){
@@ -65,6 +76,26 @@ object StageMeasurement {
       println(stage)
       println(field)
 
+      if (partitioned) {
+
+        df1.write
+          .mode("overwrite")
+          .format(fileFormat)
+          .option("header", "true")
+          .partitionBy(partitionName)
+          .save(outFileName)
+
+      }
+      else {
+
+        df1.write
+          .mode("overwrite")
+          .format(fileFormat)
+          .option("header", "true")
+          .save(outFileName)
+
+      }
+
     }
 
   }
@@ -92,26 +123,25 @@ object StageMeasurement {
       System.exit(0)
     }
 
-    val master = properties.getProperty("master")
+    master = properties.getProperty("master")
     println(master)
-    val fileName = properties.getProperty("input.file.name")
+    fileName = properties.getProperty("input.file.name")
     println(fileName)
-    val outFileName = properties.getProperty("output.file.name")
+    fileNameJoin = properties.getProperty("input.file.name-join")
+    println(fileNameJoin)
+    outFileName = properties.getProperty("output.file.name")
     println(outFileName)
-    val hiveSupport = properties.getProperty("hive.support").toBoolean
+    hiveSupport = properties.getProperty("hive.support").toBoolean
     println(hiveSupport)
-    val parThreads = properties.getProperty("spark.parallel.threads").toInt
+    parThreads = properties.getProperty("spark.parallel.threads").toInt
     println(parThreads)
-    val fileFormat = properties.getProperty("format")
+    fileFormat = properties.getProperty("format")
     println(fileFormat)
-    val partitioned = properties.getProperty("partitioned").toBoolean
+    partitioned = properties.getProperty("partitioned").toBoolean
     println(partitioned)
-    val partitionName = properties.getProperty("partition.field.name")
+    partitionName = properties.getProperty("partition.field.name")
     println(partitionName)
-    val stageNumber = properties.getProperty("stage.number").toInt
-    println(stageNumber)
-
-    var stageFlow = properties.getProperty("stage.flow")
+    stageFlow = properties.getProperty("stage.flow")
     println(stageFlow)
 
 
@@ -147,6 +177,14 @@ object StageMeasurement {
         .load(fileName)
         .repartition(parThreads)
 
+      if(fileNameJoin != null)
+        mainpartDF2 = spark.read.format("csv")
+          .option("sep", ",")
+          .option("inferSchema", "true")
+          .option("header", "true")
+          .load(fileNameJoin)
+          .repartition(parThreads)
+
     }
 
     if (fileFormat.equalsIgnoreCase("parquet")) {
@@ -157,6 +195,14 @@ object StageMeasurement {
         .option("header", "true")
         .load(fileName)
         .repartition(parThreads)
+
+      if(fileNameJoin != null)
+        mainpartDF2 = spark.read.format("parquet")
+          //.option("sep", ",")
+          //.option("inferSchema", "true")
+          .option("header", "true")
+          .load(fileNameJoin)
+          .repartition(parThreads)
 
     }
 
@@ -176,19 +222,14 @@ object StageMeasurement {
        .map { case (n, b) => (n+1, b+1) } */
 
 
+    //Perform a simulated Task Pipeline Operation (no Stages / Shuffling)
     mainpartDF = mainpartDF.withColumn("NIN", col("NIN") +1)
 
     //mainpartDF.show()
     //mainpartDF.printSchema()
 
-    mainpartDF.createOrReplaceTempView("perftest")
 
-    var result = spark.sql("SELECT * FROM perftest")
-
-    //result.show()
-    //result.printSchema()
-
-    println(result.count())
+    println(mainpartDF.count())
 
 
     //************************************************************************************
@@ -213,25 +254,7 @@ object StageMeasurement {
 
     //**************************************************************************************
 
-    if (partitioned) {
 
-      result.write
-        .mode("overwrite")
-        .format(fileFormat)
-        .option("header", "true")
-        .partitionBy(partitionName)
-        .save(outFileName)
-
-    }
-    else {
-
-      result.write
-        .mode("overwrite")
-        .format(fileFormat)
-        .option("header", "true")
-        .save(outFileName)
-
-    }
 
   }
 
