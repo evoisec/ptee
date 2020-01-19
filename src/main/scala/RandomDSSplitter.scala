@@ -65,7 +65,6 @@ object RandomDSSplitter {
     val spark = sparkT.getOrCreate()
 
     var mainpartDF: DataFrame = null
-    var mainpartDF2: DataFrame = null
 
     if (fileFormat.equalsIgnoreCase("csv")) {
 
@@ -91,6 +90,35 @@ object RandomDSSplitter {
 
     mainpartDF.printSchema()
     mainpartDF.show()
+
+
+    var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(0.9, 0.1));
+    var trainingData = splits(0);
+    println("Number of training feature vectors = " + trainingData.count());
+    var testData = splits(1);
+    println("Number of test feature vectors = " + testData.count());
+    testData.show(100)
+
+    if (partitioned) {
+
+      testData.write
+        .mode("overwrite")
+        .format(fileFormat)
+        .option("header", "true")
+        .partitionBy(partitionName)
+        .save(outFileName)
+
+    }
+    else {
+
+      testData.write
+        .mode("overwrite")
+        .format(fileFormat)
+        .option("header", "true")
+        .save(outFileName)
+
+    }
+
 
   }
 
