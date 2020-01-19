@@ -22,6 +22,7 @@ object StageMeasurement {
   var fileName: String = null
   var fileNameJoin: String = null
   var outFileName: String = null
+  var outFileNameJoin: String = null
   var hiveSupport: Boolean = true
   var parThreads: Integer = 2
   var fileFormat: String = null
@@ -51,6 +52,38 @@ object StageMeasurement {
 
       //simulate Join based Shuffling and Stage Boundary
       df1.join(df2, field).show()
+
+    }
+
+    if (stage.equalsIgnoreCase("JOIN-W")){
+
+      println("Executing Stage: " + stage)
+
+      println(stage)
+      println(field)
+
+      //simulate Join based Shuffling and Stage Boundary
+      df1.join(df2, field).show()
+
+      if (partitioned) {
+
+        df1.write
+          .mode("overwrite")
+          .format(fileFormat)
+          .option("header", "true")
+          .partitionBy(partitionName)
+          .save(outFileNameJoin)
+
+      }
+      else {
+
+        df1.write
+          .mode("overwrite")
+          .format(fileFormat)
+          .option("header", "true")
+          .save(outFileNameJoin)
+
+      }
 
     }
 
@@ -131,6 +164,8 @@ object StageMeasurement {
     println(fileNameJoin)
     outFileName = properties.getProperty("output.file.name")
     println(outFileName)
+    outFileNameJoin = properties.getProperty("output.file.name-join")
+    println(outFileNameJoin)
     hiveSupport = properties.getProperty("hive.support").toBoolean
     println(hiveSupport)
     parThreads = properties.getProperty("spark.parallel.threads").toInt
