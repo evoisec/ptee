@@ -98,11 +98,11 @@ object RandomDSSplitter {
     mainpartDF.show()
 
 
-    var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(1-splitRatio, splitRatio));
-    var trainingData = splits(0);
-    println("Number of training feature vectors = " + trainingData.count());
-    var testData = splits(1);
-    println("Number of test feature vectors = " + testData.count());
+    var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(1-splitRatio, splitRatio))
+    var trainingData = splits(0)
+    println("Number of training feature vectors = " + trainingData.count())
+    var testData = splits(1)
+    println("Number of test feature vectors = " + testData.count())
     testData.show(100)
 
     if (datePresent)
