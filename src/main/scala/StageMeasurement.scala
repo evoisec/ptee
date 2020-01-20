@@ -235,7 +235,7 @@ object StageMeasurement {
 
 
     //Perform a simulated Task Pipeline Operation (no Stages / Shuffling)
-    mainpartDF = mainpartDF.withColumn("NIN", col("NIN") +1)
+    mainpartDF = mainpartDF.withColumn("BENEFITS", col("BENEFITS") +1)
 
     //mainpartDF.show()
     //mainpartDF.printSchema()
