@@ -158,14 +158,15 @@ object GenSynt {
 
     //************* The Schema of the Synthetic Dataset **************************************
 
-    schemaTyped = schemaTyped.add("NIN", LongType, true)
+    //schemaTyped = schemaTyped.add("NIN", LongType, true)
     //schemaTyped = schemaTyped.add("NIN", IntegerType, true)
-    //schemaTyped = schemaTyped.add("NIN", "String", true)
+    schemaTyped = schemaTyped.add("NIN", "String", true)
     schemaTyped = schemaTyped.add("NAME", "String", true)
     schemaTyped = schemaTyped.add("BENEFITS", DoubleType, true)
     schemaTyped = schemaTyped.add("ADDRESS", "String", true)
     schemaTyped = schemaTyped.add("BALANCE", DoubleType, true)
     schemaTyped = schemaTyped.add("ACC_NAME", "String", true)
+    schemaTyped = schemaTyped.add("CODE", IntegerType, true)
     schemaTyped = schemaTyped.add("DATE", DateType, true)
 
     var rdd = spark.sparkContext.parallelize(kkk)
@@ -183,8 +184,8 @@ object GenSynt {
 
     //Several Data Row Schemas available for tests
     //dataRow = dataRow.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
-    //dataRow = d1.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
-    dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
+    dataRow = dataRow.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Random.nextInt(500), Date.valueOf(random(from, to).toString)))
+    //dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
 
     //println(d1.collect().toList)
 
