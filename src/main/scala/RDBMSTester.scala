@@ -87,7 +87,7 @@ object RDBMSTester {
 
 
       //perform-simulate some simple data processing with the db query result set
-      jdbcDF = jdbcDF.withColumn("NIN", col("NIN") + 1)
+      jdbcDF = jdbcDF.withColumn("BENEFITS", col("BENEFITS") + 1)
 
       println(jdbcDF.count())
       jdbcDF.show()
