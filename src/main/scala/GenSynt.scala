@@ -106,6 +106,19 @@ object GenSynt {
     val splitFileName = properties.getProperty("split.file.name")
     println(splitFileName)
 
+    val startYear = properties.getProperty("start.year").toInt
+    println(startYear)
+    val startMonth = properties.getProperty("start.month").toInt
+    println(startMonth)
+    val startDay = properties.getProperty("start.day").toInt
+    println(startDay)
+    val endYear = properties.getProperty("end.year").toInt
+    println(endYear)
+    val endMonth = properties.getProperty("end.month").toInt
+    println(endMonth)
+    val endDay = properties.getProperty("end.day").toInt
+    println(endDay)
+
     //System.exit(0)
 
     val sparkT = SparkSession.builder
@@ -186,8 +199,8 @@ object GenSynt {
     }
 
 
-    val from = LocalDate.of(2018, 1, 1)
-    val to = LocalDate.of(2020, 1, 1)
+    val from = LocalDate.of(startYear, startMonth, startDay)
+    val to = LocalDate.of(endYear, endMonth, endDay)
 
     //Several Data Row Schemas available for tests
     //dataRow = dataRow.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
