@@ -204,12 +204,18 @@ object GenSynt {
 
     println(df.count())
 
-    var splits: Array[DataFrame] = df.randomSplit(Array(1-splitRatio, splitRatio));
-    var trainingData = splits(0);
-    println("Number of training sequences = " + trainingData.count());
-    var testData = splits(1);
-    println("Number of test sequences = " + testData.count());
-    //testData.show(100)
+    var splits: Array[DataFrame] = null
+    var trainingData: DataFrame = null
+    var testData: DataFrame = null
+
+    if (split) {
+      splits = df.randomSplit(Array(1 - splitRatio, splitRatio));
+      trainingData = splits(0);
+      println("Number of training sequences = " + trainingData.count());
+      testData = splits(1);
+      println("Number of test sequences = " + testData.count());
+      //testData.show(100)
+    }
 
     //System.exit(0)
 
