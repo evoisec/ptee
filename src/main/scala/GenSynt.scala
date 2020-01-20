@@ -99,6 +99,13 @@ object GenSynt {
     val innerIter2 = properties.getProperty("inner.iterations2").toInt
     println(innerIter2)
 
+    val split = properties.getProperty("split").toBoolean
+    println(split)
+    val splitRatio = properties.getProperty("split.ratio").toFloat
+    println(splitRatio)
+    val splitFileName = properties.getProperty("split.file.name")
+    println(splitFileName)
+
     //System.exit(0)
 
     val sparkT = SparkSession.builder
@@ -197,12 +204,12 @@ object GenSynt {
 
     println(df.count())
 
-    var splits: Array[DataFrame] = df.randomSplit(Array(0.9, 0.1));
+    var splits: Array[DataFrame] = df.randomSplit(Array(1-splitRatio, splitRatio));
     var trainingData = splits(0);
     println("Number of training sequences = " + trainingData.count());
     var testData = splits(1);
     println("Number of test sequences = " + testData.count());
-    testData.show(100)
+    //testData.show(100)
 
     //System.exit(0)
 
@@ -227,6 +234,31 @@ object GenSynt {
           .format(format)
           .option("header", "true")
           .save(fileName)
+
+      }
+
+      if (split){
+
+        if (partitioned) {
+
+          df.write
+            .mode("overwrite")
+            .format(format)
+            .option("header", "true")
+            .partitionBy(partitionName)
+            .save(splitFileName)
+
+        }
+        else {
+
+          df.write
+            .mode("overwrite")
+            .format(format)
+            .option("header", "true")
+            .save(splitFileName)
+
+        }
+
 
       }
 
