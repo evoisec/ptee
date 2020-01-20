@@ -109,7 +109,9 @@ object DFSRead {
       .map { case (n, b) => (n+1, b+1) } */
 
 
-    mainpartDF = mainpartDF.withColumn("NIN", col("NIN") +1)
+    mainpartDF = mainpartDF.withColumn("BENEFITS", col("BENEFITS") +1)
+
+    mainpartDF.show()
 
     //mainpartDF.show()
     //mainpartDF.printSchema()
