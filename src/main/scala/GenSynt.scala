@@ -241,7 +241,7 @@ object GenSynt {
 
         if (partitioned) {
 
-          df.write
+          testData.write
             .mode("overwrite")
             .format(format)
             .option("header", "true")
@@ -251,7 +251,7 @@ object GenSynt {
         }
         else {
 
-          df.write
+          testData.write
             .mode("overwrite")
             .format(format)
             .option("header", "true")
