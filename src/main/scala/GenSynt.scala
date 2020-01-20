@@ -99,13 +99,6 @@ object GenSynt {
     val innerIter2 = properties.getProperty("inner.iterations2").toInt
     println(innerIter2)
 
-    val split = properties.getProperty("split").toBoolean
-    println(split)
-    val splitRatio = properties.getProperty("split.ratio").toFloat
-    println(splitRatio)
-    val splitFileName = properties.getProperty("split.file.name")
-    println(splitFileName)
-
     val startYear = properties.getProperty("start.year").toInt
     println(startYear)
     val startMonth = properties.getProperty("start.month").toInt
@@ -217,19 +210,6 @@ object GenSynt {
 
     println(df.count())
 
-    var splits: Array[DataFrame] = null
-    var trainingData: DataFrame = null
-    var testData: DataFrame = null
-
-    if (split) {
-      splits = df.randomSplit(Array(1 - splitRatio, splitRatio));
-      trainingData = splits(0);
-      println("Number of training sequences = " + trainingData.count());
-      testData = splits(1);
-      println("Number of test sequences = " + testData.count());
-      //testData.show(100)
-    }
-
     //System.exit(0)
 
     //**************** Persist the Synthetic Data ****************************************
@@ -256,30 +236,6 @@ object GenSynt {
 
       }
 
-      if (split){
-
-        if (partitioned) {
-
-          testData.write
-            .mode("overwrite")
-            .format(format)
-            .option("header", "true")
-            .partitionBy(partitionName)
-            .save(splitFileName)
-
-        }
-        else {
-
-          testData.write
-            .mode("overwrite")
-            .format(format)
-            .option("header", "true")
-            .save(splitFileName)
-
-        }
-
-
-      }
 
     }
 
