@@ -81,7 +81,7 @@ object DFSRead {
 
     var mainpartDF : DataFrame = null
 
-    if (fileFormat.equalsIgnoreCase("csv") || storage.equalsIgnoreCase("file")) {
+    if (fileFormat.equalsIgnoreCase("csv") && storage.equalsIgnoreCase("file")) {
 
       mainpartDF = spark.read.format("csv")
         .option("sep", ",")
@@ -92,7 +92,7 @@ object DFSRead {
 
     }
 
-    if (fileFormat.equalsIgnoreCase("parquet") || storage.equalsIgnoreCase("file")) {
+    if (fileFormat.equalsIgnoreCase("parquet") && storage.equalsIgnoreCase("file")) {
 
       mainpartDF = spark.read.format("parquet")
         //.option("sep", ",")
