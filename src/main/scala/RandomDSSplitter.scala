@@ -58,10 +58,14 @@ object RandomDSSplitter {
 
     val storage = properties.getProperty("storage")
     println(storage)
-    val dbName = properties.getProperty("db.name")
-    println(dbName)
-    val tableName = properties.getProperty("table.name")
-    println(tableName)
+    val indbName = properties.getProperty("input.db.name")
+    println(indbName)
+    val intableName = properties.getProperty("input.table.name")
+    println(intableName)
+    val outdbName = properties.getProperty("output.db.name")
+    println(outdbName)
+    val outtableName = properties.getProperty("output.table.name")
+    println(outtableName)
     val format = properties.getProperty("format")
     println(format)
 
@@ -75,7 +79,7 @@ object RandomDSSplitter {
 
     if (hiveSupport) {
 
-      sparkT.config("spark.sql.warehouse.dir", "/opt/dwh")
+      sparkT.config("spark.sql.warehouse.dir", dwhLocation)
       sparkT.enableHiveSupport()
 
     }
@@ -84,7 +88,7 @@ object RandomDSSplitter {
 
     var mainpartDF: DataFrame = null
 
-    if (fileFormat.equalsIgnoreCase("csv")) {
+    if (fileFormat.equalsIgnoreCase("csv") && storage.equalsIgnoreCase("file")) {
 
       mainpartDF = spark.read.format("csv")
         .option("sep", ",")
@@ -95,7 +99,7 @@ object RandomDSSplitter {
 
     }
 
-    if (fileFormat.equalsIgnoreCase("parquet")) {
+    if (fileFormat.equalsIgnoreCase("parquet") && storage.equalsIgnoreCase("file")) {
 
       mainpartDF = spark.read.format("parquet")
         //.option("sep", ",")
@@ -103,6 +107,12 @@ object RandomDSSplitter {
         .option("header", "true")
         .load(fileName)
         .repartition(parThreads)
+
+    }
+
+    if (storage.equalsIgnoreCase("db")){
+
+      mainpartDF = spark.sql("SELECT * FROM " + indbName + "." + intableName)
 
     }
 
@@ -153,7 +163,7 @@ object RandomDSSplitter {
           .mode("overwrite")
           .format(format)
           .partitionBy(partitionName)
-          .saveAsTable(dbName + "." + tableName)
+          .saveAsTable(outdbName + "." + outtableName)
 
       }
       else{
@@ -161,7 +171,7 @@ object RandomDSSplitter {
         testData.write
           .mode("overwrite")
           .format(format)
-          .saveAsTable(dbName + "." + tableName)
+          .saveAsTable(outdbName + "." + outtableName)
 
       }
 
