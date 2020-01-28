@@ -48,23 +48,32 @@ object DFSRead {
     println(parThreads)
     val fileFormat = properties.getProperty("format")
     println(fileFormat)
+    val dwhLocation = properties.getProperty("dwh.location")
+    println(dwhLocation)
+    val storage = properties.getProperty("storage")
+    println(storage)
+    val dbName = properties.getProperty("db.name")
+    println(dbName)
+    val tableName = properties.getProperty("table.name")
+    println(tableName)
 
 
     //System.exit(0)
 
     val sparkT = SparkSession.builder
       .master(master)
-      .appName("dfs-read")
+      .appName("synt-gen")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
 
 
     if (hiveSupport) {
 
-      sparkT.config("spark.sql.warehouse.dir", "/opt/dwh")
+      sparkT.config("spark.sql.warehouse.dir", dwhLocation)
       sparkT.enableHiveSupport()
 
     }
+
 
     val spark = sparkT.getOrCreate()
 
@@ -72,7 +81,7 @@ object DFSRead {
 
     var mainpartDF : DataFrame = null
 
-    if (fileFormat.equalsIgnoreCase("csv")) {
+    if (fileFormat.equalsIgnoreCase("csv") || storage.equalsIgnoreCase("file")) {
 
       mainpartDF = spark.read.format("csv")
         .option("sep", ",")
@@ -83,7 +92,7 @@ object DFSRead {
 
     }
 
-    if (fileFormat.equalsIgnoreCase("parquet")) {
+    if (fileFormat.equalsIgnoreCase("parquet") || storage.equalsIgnoreCase("file")) {
 
       mainpartDF = spark.read.format("parquet")
         //.option("sep", ",")
@@ -91,6 +100,12 @@ object DFSRead {
         .option("header", "true")
         .load(fileName)
         .repartition(parThreads)
+
+    }
+
+    if (storage.equalsIgnoreCase("db")){
+
+      mainpartDF = spark.sql("SELECT * FROM " + dbName + "." + tableName)
 
     }
 
