@@ -112,6 +112,9 @@ object GenSynt {
     val endDay = properties.getProperty("end.day").toInt
     println(endDay)
 
+    val dwhLocation = properties.getProperty("dwh.location")
+    println(dwhLocation)
+
     //System.exit(0)
 
     val sparkT = SparkSession.builder
@@ -123,7 +126,7 @@ object GenSynt {
 
      if (hiveSupport) {
 
-       sparkT.config("spark.sql.warehouse.dir", "/opt/dwh")
+       sparkT.config("spark.sql.warehouse.dir", dwhLocation)
        sparkT.enableHiveSupport()
 
      }
