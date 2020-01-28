@@ -53,6 +53,18 @@ object RandomDSSplitter {
     val datePresent = properties.getProperty("date.present").toBoolean
     println(datePresent)
 
+    val dwhLocation = properties.getProperty("dwh.location")
+    println(dwhLocation)
+
+    val storage = properties.getProperty("storage")
+    println(storage)
+    val dbName = properties.getProperty("db.name")
+    println(dbName)
+    val tableName = properties.getProperty("table.name")
+    println(tableName)
+    val format = properties.getProperty("format")
+    println(format)
+
 
     val sparkT = SparkSession.builder
       .master(master)
@@ -108,23 +120,50 @@ object RandomDSSplitter {
     if (datePresent)
       testData = testData.withColumn("DATE", col("DATE").cast("date"))
 
-    if (partitioned) {
+    if(storage.equalsIgnoreCase("file")) {
 
-      testData.write
-        .mode("overwrite")
-        .format(fileFormat)
-        .option("header", "true")
-        .partitionBy(partitionName)
-        .save(outFileName)
+      if (partitioned) {
+
+        testData.write
+          .mode("overwrite")
+          .format(format)
+          .option("header", "true")
+          .partitionBy(partitionName)
+          .save(fileName)
+
+      }
+      else {
+
+        testData.write
+          .mode("overwrite")
+          .format(format)
+          .option("header", "true")
+          .save(fileName)
+
+      }
+
 
     }
-    else {
 
-      testData.write
-        .mode("overwrite")
-        .format(fileFormat)
-        .option("header", "true")
-        .save(outFileName)
+    if(storage.equalsIgnoreCase("db")) {
+
+      if (partitioned) {
+
+        testData.write
+          .mode("overwrite")
+          .format(format)
+          .partitionBy(partitionName)
+          .saveAsTable(dbName + "." + tableName)
+
+      }
+      else{
+
+        testData.write
+          .mode("overwrite")
+          .format(format)
+          .saveAsTable(dbName + "." + tableName)
+
+      }
 
     }
 
