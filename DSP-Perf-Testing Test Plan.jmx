@@ -366,7 +366,7 @@
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
-        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="TPC-DS SQL 1" enabled="true">
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="TPC-DS SQL 1" enabled="false">
           <stringProp name="dataSource">Impala</stringProp>
           <stringProp name="query">select * from citizens_del_partitioned</stringProp>
           <stringProp name="queryArguments"></stringProp>
@@ -377,6 +377,19 @@
           <stringProp name="resultSetMaxRows"></stringProp>
           <stringProp name="resultVariable">res</stringProp>
           <stringProp name="variableNames"></stringProp>
+        </JDBCSampler>
+        <hashTree/>
+        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="TPC-DS-SQL-1-File" enabled="true">
+          <stringProp name="dataSource">Impala</stringProp>
+          <stringProp name="queryType">Select Statement</stringProp>
+          <stringProp name="query">${__FileToString(/opt/tpc-ds-1.sql,,)}</stringProp>
+          <stringProp name="queryArguments"></stringProp>
+          <stringProp name="queryArgumentsTypes"></stringProp>
+          <stringProp name="variableNames"></stringProp>
+          <stringProp name="resultVariable">ress</stringProp>
+          <stringProp name="queryTimeout"></stringProp>
+          <stringProp name="resultSetMaxRows"></stringProp>
+          <stringProp name="resultSetHandler">Store as String</stringProp>
         </JDBCSampler>
         <hashTree/>
         <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
@@ -454,7 +467,7 @@
         </ResultCollector>
         <hashTree/>
         <ResultSaver guiclass="ResultSaverGui" testclass="ResultSaver" testname="Save Responses to a file" enabled="true">
-          <stringProp name="FileSaver.filename">/opt/resp.txt</stringProp>
+          <stringProp name="FileSaver.filename">/opt/impala-resp.txt</stringProp>
           <boolProp name="FileSaver.errorsonly">false</boolProp>
           <boolProp name="FileSaver.successonly">false</boolProp>
           <boolProp name="FileSaver.skipsuffix">false</boolProp>
@@ -477,8 +490,8 @@
       </ThreadGroup>
       <hashTree>
         <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="Hive JDBC Connection Configuration" enabled="true">
-          <stringProp name="dataSource"></stringProp>
-          <stringProp name="poolMax">0</stringProp>
+          <stringProp name="dataSource">Hive</stringProp>
+          <stringProp name="poolMax">3</stringProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
           <boolProp name="autocommit">true</boolProp>
@@ -488,17 +501,17 @@
           <boolProp name="keepAlive">true</boolProp>
           <stringProp name="connectionAge">5000</stringProp>
           <stringProp name="checkQuery"></stringProp>
-          <stringProp name="dbUrl"></stringProp>
-          <stringProp name="driver"></stringProp>
+          <stringProp name="dbUrl">jdbc:hive2://localhost:10000;AuthMech=2;transportMode=sasl;UID=cloudera</stringProp>
+          <stringProp name="driver">com.cloudera.hive.jdbc.HS2Driver</stringProp>
           <stringProp name="username"></stringProp>
           <stringProp name="password"></stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="TPC-DS SQL 1" enabled="true">
-          <stringProp name="dataSource"></stringProp>
+          <stringProp name="dataSource">Hive</stringProp>
           <stringProp name="queryType">Select Statement</stringProp>
-          <stringProp name="query"></stringProp>
+          <stringProp name="query">select * from citizens_del_partitioned</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>
@@ -544,6 +557,14 @@
           </objProp>
           <stringProp name="filename"></stringProp>
         </ResultCollector>
+        <hashTree/>
+        <ResultSaver guiclass="ResultSaverGui" testclass="ResultSaver" testname="Save Responses to a file" enabled="true">
+          <stringProp name="FileSaver.filename">/opt/hive-resp.txt</stringProp>
+          <boolProp name="FileSaver.errorsonly">false</boolProp>
+          <boolProp name="FileSaver.successonly">false</boolProp>
+          <boolProp name="FileSaver.skipsuffix">false</boolProp>
+          <boolProp name="FileSaver.skipautonumber">false</boolProp>
+        </ResultSaver>
         <hashTree/>
       </hashTree>
     </hashTree>
