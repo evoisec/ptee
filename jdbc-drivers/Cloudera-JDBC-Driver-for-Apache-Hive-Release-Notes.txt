@@ -1,0 +1,225 @@
+==============================================================================
+Cloudera JDBC Driver for Apache Hive Release Notes 
+==============================================================================
+
+The release notes provide details of enhancements, features, known issues, 
+and workflow changes in Cloudera JDBC Driver for Apache Hive 2.6.9, as  well 
+as the version history. 
+
+
+2.6.9 ========================================================================
+
+Released 2019-10-04
+
+Enhancements & New Features
+
+ * [00144651][HIVEJ-561][00146044][HIVEJ-563][HIVEJ-554][HIVEJ-539] Updated 
+   third-party libraries
+
+   The driver now uses the following third-party libraries:
+   - jackson 2.9.9
+   - jackson-databind 2.9.9.3
+   - Thrift 0.12.0
+   - ZooKeeper 3.4.14
+
+ * [HIVEJ-549] Support for JDBC 4.2
+
+   The driver now supports JDBC 4.2. For more details see the Installation and
+   Configuration Guide.
+
+ * [HIVEJ-551] New JDBC class names
+
+   The driver now supports the following class names for Driver and 
+   DataSource that are independent of the JDBC version used:
+   - com.cloudera.hive.jdbc.HS1Driver
+   - com.cloudera.hive.jdbc.HS2Driver
+   - com.cloudera.hive.jdbc.HS1DataSource
+   - com.cloudera.hive.jdbc.HS2DataSource
+
+   The previous JDBC-version-specific class names for 4.0 and 4.1 are still 
+   supported.
+
+ * [00141040][HIVEJ-545] Renaming join columns
+
+   By default, the driver does not allow join columns to be renamed. To 
+   enable the renaming of join columns, set the RenameJoinColumn property to 
+   "true".
+
+
+Resolved Issues
+The following issues have been resolved in Cloudera JDBC Driver for Apache 
+Hive 2.6.9.
+
+ * [00146521][HIVEJ-569] The driver resolves the host name to an IP address 
+   for SSL verification, causing the host name verification step to fail.
+
+ * [HIVEJ-542] The driver incorrectly treats SSLTrustStore and 
+   SSLTrustStorePWD as server-side properties.
+
+
+Workflow Changes =============================================================
+
+The following changes may disrupt established workflows for the driver. 
+
+In addition to changes that are already implemented in the current version of 
+the driver, this section describes potentially disruptive changes that will 
+be implemented in a future version of the driver, so that you can plan 
+accordingly.
+
+
+Upcoming ---------------------------------------------------------------------
+
+ * Removing support for JDBC 4 (Java 6)
+
+   Beginning in the fourth quarter of 2019, the driver will no longer support 
+   JDBC 4 (Java 6). For a list of supported JDBC versions, see the 
+   Installation and Configuration Guide.
+
+
+2.6.1 ------------------------------------------------------------------------
+
+ * Removed support for JDBC 3 (Java 5)
+
+   Beginning with this release, the driver no longer supports JDBC 3 (Java 
+   5). Only JDBC 4 (Java 6) and JDBC 4.1 (Java 7) are supported.
+
+
+Version History ==============================================================
+
+2.6.5 ------------------------------------------------------------------------
+
+Released 2019-02-21
+
+Enhancements & New Features
+
+ * [HIVEJ-548] Updated CDH support
+ 
+   The driver now supports CDH versions 5.0 through 5.16 and 6.0 through 6.2.
+
+
+Resolved Issues
+The following issue was resolved in Cloudera JDBC Driver for Apache Hive 
+2.6.5.
+
+ * [00139103][HIVEJ-534] If a SQL query ends in a semicolon, the driver 
+   reports an error.
+
+   This issue has been resolved. The driver now removes trailing semicolons 
+   from queries before sending them to the server.
+
+
+2.6.4 ------------------------------------------------------------------------
+
+Released 2019-02-15
+
+Enhancements & New Features
+
+ * [HIVEJ-481] Updated Hive Service support
+
+   The driver now uses Hive Service 3.1.1 for HiverServer2 connections.
+
+ * [HIVEJ-501] Updated Hive support
+ 
+   The driver now supports Apache Hive versions 0.11 through 3.1.
+   
+ * [HIVEJ-503][HIVEJ-509][HIVEJ-511][HIVEJ-512] Updated third-party libraries
+ 
+   The driver now uses the following third-party libraries:
+   - Thrift 0.11.0
+   - Log4j 1.2.17
+   - slf4j-api 1.7.25
+   - slf4j-log4j12 1.7.25
+   - ZooKeeper 3.4.13
+
+   
+Resolved Issues
+The following issue was resolved in Cloudera JDBC Driver for Apache Hive 
+2.6.4.
+
+ * [00132424][HIVEJ-498] Queries that use REGEX column specification fail.
+   
+   This issue has been resolved. The driver no longer attempts to parse REGEX 
+   column specification.
+
+
+2.6.2 ------------------------------------------------------------------------
+
+Released 2018-05-22
+
+Enhancements & New Features
+
+ * [HIVEJ-505] CDH 5.15 now supported
+
+   The driver now supports CDH versions 5.0 through 5.15.
+
+   
+Resolved Issues
+The following issue was resolved in Cloudera JDBC Driver for Apache Hive 
+2.6.2.
+
+ * The driver does not behave according to the SocketTimeout setting, and
+   stops responding instead of returning an  error when the server takes too
+   long to respond to a request.
+   
+   This issue has been resolved. The driver now returns an error if the amount
+   of time taken by the server to respond to a request exceeds the number of
+   seconds specified by the SocketTimeout setting.
+
+
+2.6.1  -----------------------------------------------------------------------
+
+Released 2018-04-27
+
+Enhancements & New Features
+
+ * Improved installation process
+
+   Third-party libraries are now bundled with the driver as a shaded jar file.
+
+ * Updated hive-service
+
+   The driver has been upgraded to use hive-service-2.0.1 with JDBC 4.1 and 
+   hive-service-1.1.1 for JDBC 4.
+
+ * Updated third-party libraries
+
+   The driver has been upgraded to use http-client 4.5.3, http-core 4.4.6, 
+   commons-codec 1.9, commons-logging 1.2, and Zookeeper 3.4.11.
+
+   
+Resolved Issues
+The following issues were resolved in Cloudera JDBC Driver for Apache Hive 
+2.6.1.
+
+ * [00115543] A string literal after a back-tick ( ` ) is treated as a 
+   comment.
+
+ * [00115424] When the driver attempts to connect to the server using 
+   Beeline, an error occurs on the server and an exception is logged by the 
+   driver. 
+
+   This issue has been resolved. Now, when connecting to the server using 
+   Beeline, connection properties such as "driver" and "url" are no longer 
+   treated as configuration properties for the server, and the driver does 
+   not send SET queries to the server with these properties.
+
+ * [00114906] The driver removes query comments and hints when the 
+   UseNativeQuery property is set to 1.
+
+
+============================================================================== 
+Contact Us 
+============================================================================== 
+
+If you are having difficulties using the driver, our Community Forum 
+(http://community.cloudera.com) may have your solution. In addition to 
+providing user to user support, our forums are a great place to share your 
+questions, comments, and feature requests with us. 
+
+If you are a Subscription customer you may also use the Cloudera Support 
+Portal (http://www.cloudera.com/content/cloudera/en/support/home.html) to 
+search the Knowledge Base or file a Case.
+
+Important: To help us assist you, prior to contacting Cloudera Support please 
+prepare a detailed summary of the client and server environment including 
+operating system version, patch level, and configuration.

@@ -1,0 +1,347 @@
+==============================================================================
+Cloudera JDBC Driver for Impala Release Notes 
+==============================================================================
+
+The release notes provide details of enhancements, features, workflow 
+changes, and known issues in Cloudera JDBC Driver for Impala 2.6.15 as well 
+as the version history. 
+
+
+2.6.15 =======================================================================
+
+Released 2019-07-24
+
+Enhancements & New Features
+
+ * [IMPJ-489] Default port
+
+   If a port is not specified in the connection URL, the driver now uses a 
+   default port depending on the specified transport mode:
+
+   - If the transport mode is set to HTTP, the driver uses port 28000 as the 
+     default.
+   - If the transport mode is set to SASL or binary, or is not specified, 
+     the driver uses port 21050 as the default.
+
+ * [IMPJ-487] HTTP header host name
+
+   When the driver uses an HTTP header, the header now uses the host name 
+   instead of the resolved IP address.
+
+
+Resolved Issues
+The following issue has been resolved in Cloudera JDBC Driver for Impala 
+2.6.15.
+
+ * [IMPJ-488] If AuthMech is set to 0 and UID and PWD are specified in the 
+   connection URL, the username and password are not sent to the server.
+
+   This has been resolved. Now, if UID or PWD are specified in the 
+   connection URL, the driver always sends them to the server.
+
+
+Workflow Changes =============================================================
+
+The following are workflow changes to driver functionality. These changes may 
+cause some workflows from earlier versions of the driver to fail.
+
+
+2.6.15 -----------------------------------------------------------------------
+
+ * New default port
+
+   Beginning with this release, if the port is not specified in the 
+   connection URL, the driver uses a default port depending on the specified 
+   transport mode:
+
+   - If the transport mode is set to HTTP, the driver uses port 28000 as the 
+     default.
+   - If the transport mode is set to SASL or binary, or is not specified, 
+     the driver uses port 21050 as the default.
+
+   Previously, the driver always used port 21050 as the default port.
+
+
+2.6.1 ------------------------------------------------------------------------
+
+ * Removed support for JDBC 3 (Java 5)
+
+   Beginning with this release, the driver no longer supports JDBC 3 (Java 
+   5). Only JDBC 4 (Java 6) and JDBC 4.1 (Java 7) are supported.
+
+
+Version History ==============================================================
+
+2.6.14 -----------------------------------------------------------------------
+
+Released 2019-06-25
+
+Enhancements & New Features
+
+ * [IMPJ-465] Updated Impala and CDH support
+
+   The driver now supports Impala versions 1.0.1 through 3.2, and CDH 
+   versions 5.0 through 5.16 and 6.0 through 6.2.
+   
+ * [IMPJ-471] Support for JDBC 4.2
+
+   The driver now supports JDBC 4.2.
+
+ * [00141942][IMPJ-463][IMPJ-479] Support for HTTP transport
+
+   The driver now supports the use of the HTTP transport protocol. To use 
+   this transport protocol, set the new TransportMode configuration option 
+   to http, and then set the new httpPath configuration option to the partial
+   URL corresponding to the Impala server. For more information, see the 
+   Installation and Configuration Guide.
+
+   Note: The TransportMode option replaces and supersedes the deprecated 
+   UseSasl option.
+   
+ * [IMPJ-472] New JDBC class names
+
+   The driver now supports the following class names for Driver and 
+   DataSource that are independent of the JDBC version used:
+   - com.cloudera.impala.jdbc.Driver
+   - com.cloudera.impala.jdbc.DataSource
+
+   The previous JDBC-version-specific class names for 4.0 and 4.1 are still 
+   supported.
+
+ * [IMPJ-477] Updated Jackson library
+
+   The driver has been updated to use Jackson 2.9.9.
+
+
+2.6.13 -----------------------------------------------------------------------
+
+Released 2019-05-24
+
+Resolved Issues
+The following issue has been resolved in Cloudera JDBC Driver for Impala 
+2.6.13.
+
+ * [00142091][IMPJ-461] The driver casts empty strings to CHAR(0), causing 
+   issues on the server.
+   
+   This issue has been resolved. The driver now casts empty strings to 
+   CHAR(1).
+
+
+2.6.12 -----------------------------------------------------------------------
+
+Released 2019-05-17
+
+Resolved Issues
+The following issue has been resolved in Cloudera JDBC Driver for Impala 
+2.6.12.
+
+ * [00141482][IMPJ-468] The driver executes UPSERT queries incorrectly, 
+   causing errors to be shown. 
+
+
+2.6.11 -----------------------------------------------------------------------
+
+Released 2019-04-30
+
+Enhancements & New Features
+
+ * [00140475][IMPJ-453] Private IP address for Altus Service Discovery
+
+   The driver can now be configured to always use a private IP address with 
+   Altus Service Discovery. To do this, set the AltusUsePrivateIP 
+   configuration property to true. For more information, see the 
+   Installation and Configuration Guide.
+
+ * [00141482][IMPJ-458] Improved performance of prepared statements with 
+   large numbers of parameters.
+
+   Preparing statements no longer takes exponentially more time for each 
+   parameter. Additionally, DatabaseMetaData.supportsBatchUpdates() now 
+   returns true. 
+
+ * [00138441][IMPJ-443] Always pass UID parameter to server 
+
+   If the UID parameter is specified in the connection URL, the driver now 
+   passes it to the server even when No Authentication is specified 
+   (AuthMech=0).
+
+ * [00140157][IMPJ-450] Thrift Support Update  
+
+   The driver now uses version 0.12.0 of the Thrift library.
+
+
+Resolved Issues
+The following issues have been resolved in Cloudera JDBC Driver for Impala 
+2.6.11.
+
+ * [00141235][IMPJ-454] The driver incorrectly treats SSLTrustStore and 
+   SSLTrustStorePWD as server-side properties.
+
+ * [IMPJ-444] If a SQL query ends in a semicolon, the driver reports an
+   error.
+
+   This issue has been resolved. The driver now removes trailing semicolons
+   from queries before sending them to the server.
+   
+
+2.6.9 ------------------------------------------------------------------------
+
+Released 2019-02-08
+
+Enhancements & New Features
+
+ * [IMPJ-448] Updated Impala and CDH support
+
+   The driver now supports Impala versions 1.0.1 through 3.1, and CDH 
+   versions 5.0 through 5.16 and 6.0 through 6.1.
+
+
+Resolved Issues
+The following issue has been resolved in Cloudera JDBC Driver for Impala 
+2.6.9.
+
+ * [00137281][IMPJ-437] After a query fails on the server side, subsequent 
+   queries on driver side also fail.
+
+
+2.6.8 ------------------------------------------------------------------------
+
+Released 2019-01-25
+
+Enhancements & New Features
+
+ * [IMPJ-422] Support for Impala 3.0 and CDH 6.0
+
+   The driver now supports Impala versions 1.0.1 through 3.0, and CDH 
+   versions 5.0 through 6.0.
+   
+ * [00134274][IMPJ-419] UPSERT queries supported for Apache Kudu tables
+
+   You can now execute UPSERT queries when using prepared statements to query 
+   Kudu tables through Impala.
+
+ * [IMPJ-415][IMPJ-420] Updated third-party libraries
+
+   The driver has been updated to use the following libraries:
+   - Hive Service RPC 3.1.1
+   - Apache ZooKeeper 3.4.13
+   
+ * [IMPJ-433] Updated Altus SDK for Java
+
+   The driver now uses a newer version of the Altus SDK for Java, which
+   provides protection against security vulnerabilities that have been found 
+   in the Jackson libraries.
+
+ * [IMPJ-427] Improved error messaging for Altus Service Discovery
+ 
+   The driver now provides more detailed messages for errors related to the
+   Altus Service Discovery feature.
+
+
+Resolved Issues
+The following issue has been resolved in Cloudera JDBC Driver for Impala 
+2.6.8.
+
+ * [00133349][IMPJ-402] When executing a statement that only contains a 
+   comment, the driver returns an error.
+   
+
+2.6.6 ------------------------------------------------------------------------
+
+Released 2018-11-08
+
+Enhancements & New Features
+
+ * [IMPJ-361] Improved scalar function support
+
+   The driver now defaults to the native implementations of scalar functions
+   where they are supported by the Impala server.
+
+ * [IMPJ-403][IMPJ-413][IMPJ-416] Updated third-party libraries
+
+   The driver has been updated to use:
+   - Thrift 0.11.0
+   - Log4j 1.2.17
+   - slf4j-api and slfj-log4j12 1.7.25
+
+ * [IMPJ-410] Dynamic service discovery through Cloudera Altus
+
+   The driver can now discover and connect to Impala services through Cloudera
+   Altus. For detailed information about configuring this type of connection, 
+   see the Installation and Configuration Guide.
+
+
+2.6.4 ------------------------------------------------------------------------
+
+Released 2018-06-29
+
+Enhancements & New Features
+
+ * [IMPJ-397] Support for Impala 2.12 and CDH 5.15
+
+   The driver now supports Impala versions 1.0.1 through 2.12, and CDH 
+   versions 5.0 through 5.15.
+
+
+Resolved Issues
+The following issue was resolved in Cloudera JDBC Driver for Impala 
+2.6.4.
+
+ * [00116966][IMPJ-386] Documentation for the SocketTimeout configuration 
+   option is incorrect.
+
+
+2.6.3 ------------------------------------------------------------------------ 
+
+Released 2018-04-18
+
+Enhancements & New Features
+
+ * [IMPJ-380] Updated Apache ZooKeeper library
+
+   The driver has been upgraded to use Apache ZooKeeper 3.4.11.
+
+ * [IMPJ-381] Third-party license file
+
+   The driver package now includes the file third-party-licenses.txt. This 
+   text file contains the licenses for all third-party software used in the 
+   driver. The third-party license information is also available in the 
+   Installation and Configuration Guide.
+
+
+Resolved Issues
+The following issue has been resolved in Cloudera JDBC Driver for Impala 
+2.6.3.
+
+ * [00115517][IMPJ-353] When attempting to close a statement that is 
+   already closed, the driver logs an error.
+
+
+2.6.2 ------------------------------------------------------------------------ 
+
+Released 2018-04-06
+
+Enhancements & New Features
+
+ * Updated Apache ZooKeeper library
+
+   The driver has been upgraded to use Apache ZooKeeper 3.4.7.
+
+
+============================================================================== 
+Contact Us 
+============================================================================== 
+
+If you are having difficulties using the driver, our Community Forum 
+(http://community.cloudera.com) may have your solution. In addition to 
+providing user to user support, our forums are a great place to share your 
+questions, comments, and feature requests with us. 
+
+If you are a Subscription customer you may also use the Cloudera Support 
+Portal (http://www.cloudera.com/content/cloudera/en/support/home.html) to 
+search the Knowledge Base or file a Case.
+
+Important: To help us assist you, prior to contacting Cloudera Support please 
+prepare a detailed summary of the client and server environment including 
+operating system version, patch level, and configuration.
