@@ -56,7 +56,7 @@ object GenSynt {
     println(dbName)
     val tableName = properties.getProperty("table.name")
     println(tableName)
-    val fileName = properties.getProperty("file.name")
+    var fileName = properties.getProperty("file.name")
     println(fileName)
     val partitioned = properties.getProperty("partitioned").toBoolean
     println(partitioned)
@@ -108,10 +108,20 @@ object GenSynt {
     val endDay = properties.getProperty("end.day").toInt
     println(endDay)
 
+    val uuidSufix = properties.getProperty("uuid.filename.sufix").toBoolean
+    println(uuidSufix)
+
+
     val dwhLocation = properties.getProperty("dwh.location")
     println(dwhLocation)
 
     //System.exit(0)
+
+    if(uuidSufix){
+
+      fileName = fileName + "-" + randomUUID().toString
+
+    }
 
     val sparkT = SparkSession.builder
       .master(master)
