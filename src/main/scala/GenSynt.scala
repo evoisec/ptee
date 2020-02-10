@@ -1,4 +1,4 @@
-import java.io.FileNotFoundException
+import java.io.{File, FileInputStream, FileNotFoundException}
 import java.nio.file.{Files, Paths}
 import java.sql.Date
 import java.util.Properties
@@ -38,8 +38,11 @@ object GenSynt {
     //########################## Get the Parameters of the Job ##########################################
     // Assuming that application.properties is in the root folder of the spark job
 
+    val cfgFile = args(1)
+
     val properties: Properties = new Properties()
 
+   /*
     if (Files.exists(Paths.get("./dsgen.properties"))){
       val source = Source.fromURL("file:./dsgen.properties")
       properties.load(source.bufferedReader())
@@ -48,6 +51,12 @@ object GenSynt {
       val source = Source.fromURL("file:dsgen.properties")
       properties.load(source.bufferedReader())
     }
+   */
+
+    println(cfgFile)
+
+    if (Files.exists(Paths.get(cfgFile)))
+      properties.load(new FileInputStream(cfgFile))
     else{
       println("no properties file, exiting")
       println(System.getProperty("user.dir"))
