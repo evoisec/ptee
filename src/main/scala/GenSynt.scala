@@ -54,7 +54,7 @@ object GenSynt {
     println(master)
     val dbName = properties.getProperty("db.name")
     println(dbName)
-    val tableName = properties.getProperty("table.name")
+    var tableName = properties.getProperty("table.name")
     println(tableName)
     var fileName = properties.getProperty("file.name")
     println(fileName)
@@ -119,9 +119,11 @@ object GenSynt {
 
     if(uuidSufix){
 
-      fileName = fileName + "-" + randomUUID().toString
+      fileName = fileName + "_" + randomUUID().toString.replace("-", "_")
+      tableName = tableName + "_" + randomUUID().toString.replace("-", "_")
 
     }
+
 
     val sparkT = SparkSession.builder
       .master(master)
