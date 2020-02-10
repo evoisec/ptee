@@ -36,7 +36,6 @@ object GenSynt {
 
 
     //########################## Get the Parameters of the Job ##########################################
-    // Assuming that application.properties is in the root folder of the spark job
 
     val cfgFile = args(1)
     val properties: Properties = new Properties()
