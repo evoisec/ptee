@@ -1,5 +1,7 @@
+import java.io.FileInputStream
 import java.nio.file.{Files, Paths}
 import java.util.Properties
+import java.util.UUID.randomUUID
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame, RelationalGroupedDataset, Row, SparkSession}
@@ -107,19 +109,14 @@ object StageMeasurement {
 
 
     //########################## Get the Parameters of the Job ##########################################
-    // Assuming that application.properties is in the root folder of the spark job
 
+    val cfgFile = args(1)
     val properties: Properties = new Properties()
+    println(cfgFile)
 
-    if (Files.exists(Paths.get("./stagemeasurements.properties"))) {
-      val source = Source.fromURL("file:./stagemeasurements.properties")
-      properties.load(source.bufferedReader())
-    }
-    else if (Files.exists(Paths.get("stagemeasurements.properties"))) {
-      val source = Source.fromURL("file:stagemeasurements.properties")
-      properties.load(source.bufferedReader())
-    }
-    else {
+    if (Files.exists(Paths.get(cfgFile)))
+      properties.load(new FileInputStream(cfgFile))
+    else{
       println("no properties file, exiting")
       println(System.getProperty("user.dir"))
       System.exit(0)
@@ -148,8 +145,16 @@ object StageMeasurement {
     datePresent = properties.getProperty("date.present").toBoolean
     println(datePresent)
 
+    val uuidSufix = properties.getProperty("uuid.filename.sufix").toBoolean
+    println(uuidSufix)
 
     //System.exit(0)
+
+    if(uuidSufix){
+
+      outFileName = outFileName + "_" + randomUUID().toString.replace("-", "_")
+
+    }
 
     val sparkT = SparkSession.builder
       .master(master)
