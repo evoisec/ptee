@@ -3,6 +3,8 @@ Hadoop Performance Testing & Measurement Suite - Business Level Workload Emulati
 
 Enables the generation of Actionable (Measurement) Information supporting Informed Capacity Planning as well as Predictive Models for Performance Scaling and Cluster Sizing  
 
+Apache JMETER is used for Test Scenario Workflow Automation
+
 There is a lack of modern, business level tools for workload performance testing on Hadoop. Carried on by inertia, the majority 
 of the IT industry is still using archaic, outadted "benchmarks" the majority of which are writtent in Map Reduce 
 (not used almost at all in real projects) and implementing "toy" algorithms / data processing like e.g. "sorting" (as in "TerraSort") 
