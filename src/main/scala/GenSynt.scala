@@ -39,20 +39,7 @@ object GenSynt {
     // Assuming that application.properties is in the root folder of the spark job
 
     val cfgFile = args(1)
-
     val properties: Properties = new Properties()
-
-   /*
-    if (Files.exists(Paths.get("./dsgen.properties"))){
-      val source = Source.fromURL("file:./dsgen.properties")
-      properties.load(source.bufferedReader())
-    }
-    else if (Files.exists(Paths.get("dsgen.properties"))) {
-      val source = Source.fromURL("file:dsgen.properties")
-      properties.load(source.bufferedReader())
-    }
-   */
-
     println(cfgFile)
 
     if (Files.exists(Paths.get(cfgFile)))
