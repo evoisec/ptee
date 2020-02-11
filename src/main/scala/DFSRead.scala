@@ -1,3 +1,4 @@
+import java.io.FileInputStream
 import java.nio.file.{Files, Paths}
 import java.util.Properties
 
@@ -20,19 +21,13 @@ object DFSRead {
 
 
     //########################## Get the Parameters of the Job ##########################################
-    // Assuming that application.properties is in the root folder of the spark job
-
+    val cfgFile = args(1)
     val properties: Properties = new Properties()
+    println(cfgFile)
 
-    if (Files.exists(Paths.get("./dfsread.properties"))) {
-      val source = Source.fromURL("file:./dfsread.properties")
-      properties.load(source.bufferedReader())
-    }
-    else if (Files.exists(Paths.get("dfsread.properties"))) {
-      val source = Source.fromURL("file:dfsread.properties")
-      properties.load(source.bufferedReader())
-    }
-    else {
+    if (Files.exists(Paths.get(cfgFile)))
+      properties.load(new FileInputStream(cfgFile))
+    else{
       println("no properties file, exiting")
       println(System.getProperty("user.dir"))
       System.exit(0)
