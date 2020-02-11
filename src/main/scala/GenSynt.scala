@@ -14,6 +14,8 @@ import java.util.UUID.randomUUID
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
 
+import org.apache.spark.sql.functions.col
+
 import scala.util.Random
 
 /**********************************************************************************************************************
@@ -213,7 +215,7 @@ object GenSynt {
     //println(d1.collect().toList)
 
 
-    val df = spark.sqlContext.createDataFrame(dataRow, schemaTyped)
+    var df = spark.sqlContext.createDataFrame(dataRow, schemaTyped)
 
     df.printSchema()
     df.show()
@@ -251,6 +253,8 @@ object GenSynt {
 
     if(storage.equalsIgnoreCase("db")) {
 
+      df = df.withColumn("DATE", col("DATE").cast("timestamp"))
+
       if (partitioned) {
 
         df.write
@@ -261,6 +265,8 @@ object GenSynt {
 
       }
       else{
+
+        df = df.withColumn("DATE", col("DATE").cast("timestamp"))
 
         df.write
           .mode("overwrite")
