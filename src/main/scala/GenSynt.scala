@@ -6,7 +6,7 @@ import java.util.Properties
 import PII.getClass
 import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.types.{DateType, DecimalType, DoubleType, IntegerType, LongType, StringType, StructField, StructType}
+import org.apache.spark.sql.types.{DateType, DecimalType, DoubleType, IntegerType, LongType, StringType, StructField, StructType, TimestampType}
 
 import scala.io.Source
 import scala.util.Random
@@ -109,6 +109,9 @@ object GenSynt {
     val endDay = properties.getProperty("end.day").toInt
     println(endDay)
 
+    val filePartitions = properties.getProperty("file.partitions.number").toInt
+    println(filePartitions)
+
     val uuidSufix = properties.getProperty("uuid.filename.sufix").toBoolean
     println(uuidSufix)
 
@@ -128,7 +131,7 @@ object GenSynt {
 
     val sparkT = SparkSession.builder
       .master(master)
-      .appName("synt-gen")
+      .appName("stage-measurement")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
 
@@ -192,6 +195,7 @@ object GenSynt {
     schemaTyped = schemaTyped.add("BALANCE", DoubleType, true)
     schemaTyped = schemaTyped.add("ACC_NAME", "String", true)
     schemaTyped = schemaTyped.add("CODE", IntegerType, true)
+    schemaTyped = schemaTyped.add("PARTITIONER", "String", true)
     schemaTyped = schemaTyped.add("DATE", DateType, true)
 
     var rdd = spark.sparkContext.parallelize(kkk)
@@ -209,7 +213,7 @@ object GenSynt {
 
     //Several Data Row Schemas available for tests
     //dataRow = dataRow.map(x => Row(Random.nextInt(ninInt), randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
-    dataRow = dataRow.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Random.nextInt(500), Date.valueOf(random(from, to).toString)))
+    dataRow = dataRow.map(x => Row(randomUUID().toString, randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Random.nextInt(500), Random.nextInt(filePartitions).toString, Date.valueOf(random(from, to).toString) ))
     //dataRow = dataRow.map(x => Row(  randomUUID().getLeastSignificantBits().abs,  randomUUID().toString, Random.nextDouble(), randomAlpha(addressStr), Random.nextDouble(), randomAlpha(accNameStr), Date.valueOf(random(from, to).toString)))
 
     //println(d1.collect().toList)
