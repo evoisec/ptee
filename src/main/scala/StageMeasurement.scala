@@ -186,13 +186,6 @@ object StageMeasurement {
         .load(fileName)
         .repartition(parThreads)
 
-      if(fileNameJoin != null)
-        mainpartDF2 = spark.read.format("csv")
-          .option("sep", ",")
-          .option("inferSchema", "true")
-          .option("header", "true")
-          .load(fileNameJoin)
-          .repartition(parThreads)
 
     }
 
@@ -205,16 +198,10 @@ object StageMeasurement {
         .load(fileName)
         .repartition(parThreads)
 
-      if(fileNameJoin != null)
-        mainpartDF2 = spark.read.format("parquet")
-          //.option("sep", ",")
-          //.option("inferSchema", "true")
-          .option("header", "true")
-          .load(fileNameJoin)
-          .repartition(parThreads)
 
     }
 
+    /*
 
     if (datePresent) {
       mainpartDF = mainpartDF.withColumn("DATE", col("DATE").cast("date"))
@@ -222,6 +209,8 @@ object StageMeasurement {
       if(mainpartDF2 != null)
         mainpartDF2 = mainpartDF2.withColumn("DATE", col("DATE").cast("date"))
     }
+
+     */
 
     mainpartDF.printSchema()
     mainpartDF.show()
