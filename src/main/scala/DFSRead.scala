@@ -57,7 +57,7 @@ object DFSRead {
 
     val sparkT = SparkSession.builder
       .master(master)
-      .appName("synt-gen")
+      .appName("dfs-read")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
 
