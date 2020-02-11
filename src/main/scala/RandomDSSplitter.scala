@@ -127,8 +127,8 @@ object RandomDSSplitter {
     println("Number of test feature vectors = " + testData.count())
     testData.show(100)
 
-    if (datePresent)
-      testData = testData.withColumn("DATE", col("DATE").cast("date"))
+    //if (datePresent)
+      //testData = testData.withColumn("DATE", col("DATE").cast("date"))
 
     if(storage.equalsIgnoreCase("file")) {
 
