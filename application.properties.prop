@@ -1,10 +1,12 @@
-generate.synthetic.datasets=true
+generate.synthetic.datasets=false
 main.table=citizens_partitioned
 gdpr.table=citizens_del_partitioned
 tmp.dir=/opt/tmp
-mv.command=standalone
-partitioning.column=dob
+#mv.command=standalone
+mv.command=hadoop
+partitioning.column=PARTITIONER
 #dwh.location=/opt/dwh
 dwh.location=/user/hive/warehouse
-master=local[*]
+#master=local[*]
+master=yarn
 controled.exec=false
