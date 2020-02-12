@@ -1,3 +1,4 @@
+import java.io.FileInputStream
 import java.nio.file.{Files, Paths}
 import java.util.Properties
 
@@ -12,19 +13,14 @@ object RandomDSSplitter {
   def main(args: Array[String]): Unit = {
 
     //########################## Get the Parameters of the Job ##########################################
-    // Assuming that application.properties is in the root folder of the spark job
 
+    val cfgFile = args(1)
     val properties: Properties = new Properties()
+    println(cfgFile)
 
-    if (Files.exists(Paths.get("./dssplitter.properties"))) {
-      val source = Source.fromURL("file:./dssplitter.properties")
-      properties.load(source.bufferedReader())
-    }
-    else if (Files.exists(Paths.get("dssplitter.properties"))) {
-      val source = Source.fromURL("file:dssplitter.properties")
-      properties.load(source.bufferedReader())
-    }
-    else {
+    if (Files.exists(Paths.get(cfgFile)))
+      properties.load(new FileInputStream(cfgFile))
+    else{
       println("no properties file, exiting")
       println(System.getProperty("user.dir"))
       System.exit(0)
@@ -49,9 +45,6 @@ object RandomDSSplitter {
 
     val splitRatio = properties.getProperty("split.ratio").toDouble
     println(splitRatio)
-
-    val datePresent = properties.getProperty("date.present").toBoolean
-    println(datePresent)
 
     val dwhLocation = properties.getProperty("dwh.location")
     println(dwhLocation)
@@ -139,7 +132,7 @@ object RandomDSSplitter {
           .format(format)
           .option("header", "true")
           .partitionBy(partitionName)
-          .save(fileName)
+          .save(outFileName)
 
       }
       else {
@@ -148,7 +141,7 @@ object RandomDSSplitter {
           .mode("overwrite")
           .format(format)
           .option("header", "true")
-          .save(fileName)
+          .save(outFileName)
 
       }
 
