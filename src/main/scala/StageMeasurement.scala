@@ -57,7 +57,12 @@ object StageMeasurement {
       println(field)
 
       //simulate Join based Shuffling and Stage Boundary
+
       dataFrameRes = df1.join(df2, field)
+
+      val newColumns = Seq("newCol1","newCol2","newCol3","newCol4","newCol5","newCol6","newCol7","newCol8","newCol9","newCol10","newCol11","newCol12","newCol13","newCol14","newCol15", "newcol16", "newcol17")
+      dataFrameRes = dataFrameRes.toDF(newColumns:_*)
+
       dataFrameRes.show()
       dataFrameRes.count()
 
