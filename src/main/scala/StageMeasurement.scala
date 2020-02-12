@@ -145,7 +145,7 @@ object StageMeasurement {
     println(master)
     fileName = properties.getProperty("input.file.name")
     println(fileName)
-    fileNameJoin = properties.getProperty("input.file.name-join")
+    fileNameJoin = properties.getProperty("input.file.name.join")
     println(fileNameJoin)
     outFileName = properties.getProperty("output.file.name")
     println(outFileName)
@@ -206,6 +206,14 @@ object StageMeasurement {
         .repartition(parThreads)
 
 
+      mainpartDF2 = spark.read.format("csv")
+        .option("sep", ",")
+        .option("inferSchema", "true")
+        .option("header", "true")
+        .load(fileNameJoin)
+        .repartition(parThreads)
+
+
     }
 
     if (fileFormat.equalsIgnoreCase("parquet")) {
@@ -215,6 +223,13 @@ object StageMeasurement {
         //.option("inferSchema", "true")
         .option("header", "true")
         .load(fileName)
+        .repartition(parThreads)
+
+      mainpartDF2 = spark.read.format("parquet")
+        //.option("sep", ",")
+        //.option("inferSchema", "true")
+        .option("header", "true")
+        .load(fileNameJoin)
         .repartition(parThreads)
 
 
