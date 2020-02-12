@@ -32,7 +32,9 @@ object StageMeasurement {
   var stageFlow: String = null
   var datePresent: Boolean = true
 
-  def stageRunner(stage: String, field: String, df1: DataFrame, df2: DataFrame): Unit = {
+  def stageRunner(stage: String, field: String, df1: DataFrame, df2: DataFrame): DataFrame = {
+
+    var dataFrameRes: DataFrame = null
 
     if (stage.equalsIgnoreCase("GROUP")){
 
@@ -41,7 +43,9 @@ object StageMeasurement {
       println(stage)
       println(field)
 
-      df1.groupBy(field).sum("BENEFITS").count()
+      dataFrameRes = df1.groupBy(field).sum("BENEFITS")
+      dataFrameRes.show()
+      dataFrameRes.count()
 
     }
 
@@ -53,7 +57,9 @@ object StageMeasurement {
       println(field)
 
       //simulate Join based Shuffling and Stage Boundary
-      df1.join(df2, field).show()
+      dataFrameRes = df1.join(df2, field)
+      dataFrameRes.show()
+      dataFrameRes.count()
 
     }
 
@@ -65,11 +71,13 @@ object StageMeasurement {
       println(stage)
       println(field)
 
-      var i = df1.cube(col(field), col("ADDRESS")).agg(Map(
+
+      dataFrameRes = df1.cube(col(field), col("ADDRESS")).agg(Map(
         "BENEFITS" -> "avg",
         "BALANCE" -> "max"
       ))
-      i.show()
+      dataFrameRes.show()
+      dataFrameRes.count()
 
     }
 
@@ -80,9 +88,16 @@ object StageMeasurement {
       println(stage)
       println(field)
 
+
+      if (dataFrameRes == null) {
+
+        dataFrameRes = df1
+
+      }
+
       if (partitioned) {
 
-        df1.write
+        dataFrameRes.write
           .mode("overwrite")
           .format(fileFormat)
           .option("header", "true")
@@ -92,7 +107,7 @@ object StageMeasurement {
       }
       else {
 
-        df1.write
+        dataFrameRes.write
           .mode("overwrite")
           .format(fileFormat)
           .option("header", "true")
@@ -100,7 +115,11 @@ object StageMeasurement {
 
       }
 
+
+
     }
+
+    return dataFrameRes
 
   }
 
@@ -244,15 +263,17 @@ object StageMeasurement {
     println(stageFlow)
     val stages = stageFlow.split(",")
 
+    var storageDataFrame: DataFrame = mainpartDF
+
     for (i <- stages){
 
       //println(i)
       val s = i.split(":")
 
       if (s.length > 1)
-        stageRunner(s(0), s(1), mainpartDF, mainpartDF2)
+        storageDataFrame = stageRunner(s(0), s(1), mainpartDF, mainpartDF2)
       else
-        stageRunner(s(0), "", mainpartDF, mainpartDF2)
+        storageDataFrame = stageRunner(s(0), "", storageDataFrame, mainpartDF2)
 
     }
 
