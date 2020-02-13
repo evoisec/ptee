@@ -10,4 +10,4 @@ partitioning.column=PARTITIONER
 dwh.location=/user/hive/warehouse
 #master=local[*]
 master=yarn
-controled.exec=true
+controled.exec=false
