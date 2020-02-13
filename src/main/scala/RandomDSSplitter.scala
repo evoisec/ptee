@@ -62,6 +62,11 @@ object RandomDSSplitter {
     val format = properties.getProperty("format")
     println(format)
 
+    val splitRecNum = properties.getProperty("split.record.number").toInt
+    println(splitRecNum)
+    val splitPartNum = properties.getProperty("split.partitioner.number").toInt
+    println(splitPartNum)
+
 
     val sparkT = SparkSession.builder
       .master(master)
@@ -80,6 +85,7 @@ object RandomDSSplitter {
     val spark = sparkT.getOrCreate()
 
     var mainpartDF: DataFrame = null
+    var derivedDF: DataFrame = null
 
     if (fileFormat.equalsIgnoreCase("csv") && storage.equalsIgnoreCase("file")) {
 
@@ -103,22 +109,38 @@ object RandomDSSplitter {
 
     }
 
-    if (storage.equalsIgnoreCase("db")){
+    if (storage.equalsIgnoreCase("db") && splitRecNum == 0){
 
-      mainpartDF = spark.sql("SELECT * FROM " + indbName + "." + intableName)
+      mainpartDF = spark.sql("SELECT * FROM " + indbName + "." + intableName )
+
+      mainpartDF.printSchema()
+      mainpartDF.show()
+
+    } else if (storage.equalsIgnoreCase("db") && splitRecNum != 0) {
+
+      derivedDF = spark.sql("SELECT * FROM " + indbName + "." + intableName + " WHERE PARTITIONER=" + splitPartNum.toString + " limit " + splitRecNum.toString)
+      derivedDF.show()
 
     }
 
-    mainpartDF.printSchema()
-    mainpartDF.show()
 
 
-    var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(1-splitRatio, splitRatio))
-    var trainingData = splits(0)
-    println("Number of training feature vectors = " + trainingData.count())
-    var testData = splits(1)
-    println("Number of test feature vectors = " + testData.count())
-    testData.show(100)
+    var testData: DataFrame = null
+
+    if (splitRecNum == 0) {
+
+      var splits: Array[DataFrame] = mainpartDF.randomSplit(Array(1 - splitRatio, splitRatio))
+      var trainingData = splits(0)
+      println("Number of training feature vectors = " + trainingData.count())
+      testData = splits(1)
+      println("Number of test feature vectors = " + testData.count())
+      testData.show(100)
+
+    } else{
+
+      testData = derivedDF
+
+    }
 
     //if (datePresent)
       //testData = testData.withColumn("DATE", col("DATE").cast("date"))
