@@ -184,12 +184,19 @@ object PII {
     val dfPartitions = spark.sql("SHOW PARTITIONS " + gdprTable) //this is how to get the paritions of the Input table at runtime
     dfPartitions .show()
 
+    val ps = dfPartitions.select("partition").as("String").collect()
+    for (e <- ps) {
+      println(e.get(0).toString.filterNot("[]".toSet))
+    }
+
+    //System.exit(0)
+
     var dfLocation = spark.sql("DESCRIBE EXTENDED " + mainTable)
     dfLocation.show(dfLocation.count().toInt,false)
     var tvDF = dfLocation.createOrReplaceTempView("tablemetadata")
     dfLocation = spark.sql("SELECT * FROM tablemetadata WHERE col_name = 'Location'")
     dfLocation.show(dfLocation.count().toInt,false)
-    val filepath:String = dfLocation.toLocalIterator().next().toSeq(1).toString.substring(5)
+    val filepath:String = dfLocation.toLocalIterator().next().toSeq(1).toString
     println(filepath)
 
     if(controledExec) {
@@ -206,14 +213,38 @@ object PII {
 
     //the following derives and processes Target partiions automatically
     if(mvCommand.equalsIgnoreCase("standalone")) {
+
+      println("moving standalone: " + "mv " + filepath + "/" + "col" + " " + tmpDir)
+
       dfPartitions.foreach { row =>
         row.toSeq.foreach { col => ("mv " + filepath + "/" + col + " " + tmpDir).! }
       }
     }
     else{
-      dfPartitions.foreach { row =>
-        row.toSeq.foreach { col => ("hadoop dfs -mv " + filepath + "/" + col + " " + tmpDir).! }
+
+      println("moving hadoop: " + "hadoop dfs -mv " + filepath + "/" + "col" + " " + tmpDir)
+
+      for (col <- ps) {
+
+        var col1 = col.get(0).toString.filterNot("[]".toSet)
+
+        ("hadoop dfs -mv " + filepath + "/" + col1 + " " + tmpDir).!
+
       }
+
+      //dfPartitions.foreach { row =>
+        //row.toSeq.foreach { col => ("hadoop dfs -mv " + filepath + "/" + col + " " + tmpDir).! }
+      //}
+    }
+
+    //println("hadoop dfs -mv " + filepath + "/" + "PARTITIONER=11" + " " + tmpDir)
+    //("hadoop dfs -mv /user/hive/warehouse/mainpii_partitioned/PARTITIONER=11 /tmp/pii1").!
+
+    //("hadoop dfs -mv hdfs://quickstart.cloudera:8020/user/hive/warehouse/mainpii_partitioned/PARTITIONER=11 /tmp/pii1").!
+
+    if(controledExec) {
+      println("Moved the Target Partions. Press ENTER to continue")
+      scala.io.StdIn.readLine() //waits for any key to be pressed
     }
 
     //read the tmp table containing onlly the target partitions of the main table (note there is no need to register the table
@@ -222,6 +253,7 @@ object PII {
     mainpartDF.createOrReplaceTempView("mainpartitions")
     var citizensDF = spark.sql("SELECT * FROM mainpartitions")
     citizensDF.show()
+
 
     //deletion against Citizen records in an input dataset/table which represent a new batch of Citizen PII Records requested for deletion
     var citizensUpdatedDF = spark.sql("SELECT * FROM mainpartitions WHERE nin NOT IN (SELECT nin FROM " + gdprTable + ")")
