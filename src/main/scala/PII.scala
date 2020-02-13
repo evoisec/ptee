@@ -132,8 +132,8 @@ object PII {
 
     val spark = SparkSession.builder
       //.master(master)
-      .master("yarn")
-      .appName("oltp-gdpr")
+      .master(master)
+      .appName("pii-gdpr")
       //put here any required param controlling Vectorization (see all available params listed at the beginning)
       .config("spark.sql.parquet.enableVectorizedReader ", "true")
       .config("spark.sql.warehouse.dir", dwhLocation)
@@ -164,12 +164,26 @@ object PII {
 
     var dfTable = spark.sql("SELECT * FROM " + mainTable) //this is how to get the paritions of the Input table at runtime
     dfTable .show()
+    var dfcount = spark.sql("SELECT count(*) FROM " + mainTable)
+    dfcount.show()
 
     dfTable = spark.sql("SELECT * FROM " + gdprTable) //this is how to get the paritions of the Input table at runtime
     dfTable .show()
+    dfcount = spark.sql("SELECT count(*) FROM " + gdprTable)
+    dfcount.show()
 
     if(genDS)
       exit(0)
+
+    if(controledExec) {
+      println("Both Input Tables found. Press ENTER to continue")
+      scala.io.StdIn.readLine() //waits for any key to be pressed
+    }
+
+    //***************************************************************************************************************************
+
+
+
 
     //the table partitions containing the records to be deleted (will be infered automatically by the spark job from the paritions of
     // the input table. the sample input table used here, has two paritions dob=1950 and dob=1960)
@@ -232,9 +246,11 @@ object PII {
       .partitionBy(partitionCol)
       .saveAsTable(mainTable)
 
-    //show the end result from the record deletion operation by re-reading and showing the full main table
-    var citizensUpdatedFullDF = spark.sql("SELECT * FROM " + mainTable)
-    citizensUpdatedFullDF.show()
+    if(controledExec) {
+      //show the end result from the record deletion operation by re-reading and showing the full main table
+      var citizensUpdatedFullDF = spark.sql("SELECT count(*) FROM " + mainTable)
+      citizensUpdatedFullDF.show()
+    }
 
     spark.stop()
 
