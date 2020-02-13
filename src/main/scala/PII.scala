@@ -1,16 +1,14 @@
 import java.lang.System._
-import sys.process._
 
+import sys.process._
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
-
-import java.io.FileNotFoundException
+import java.io.{FileInputStream, FileNotFoundException}
 import java.util.Properties
 
 import scala.io.Source
 import scala.io.Source.fromURL
-
-import java.nio.file.{Paths, Files}
+import java.nio.file.{Files, Paths}
 
 /**********************************************************************************************************************
  *
@@ -90,16 +88,12 @@ object PII {
 
     //########################## Get the Parameters of the Job ##########################################
 
+    val cfgFile = args(1)
     val properties: Properties = new Properties()
+    println(cfgFile)
 
-    if (Files.exists(Paths.get("./application.properties.prop"))){
-      val source = Source.fromURL("file:./application.properties.prop")
-      properties.load(source.bufferedReader())
-    }
-    else if (Files.exists(Paths.get("application.properties.prop"))) {
-      val source = Source.fromURL("file:application.properties.prop")
-      properties.load(source.bufferedReader())
-    }
+    if (Files.exists(Paths.get(cfgFile)))
+      properties.load(new FileInputStream(cfgFile))
     else{
       println("no properties file, exiting")
       println(System.getProperty("user.dir"))
