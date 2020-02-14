@@ -36,12 +36,12 @@ object RDBMSTester {
 
     val master = properties.getProperty("master")
     println(master)
-    val fileName = properties.getProperty("input.file.name")
-    println(fileName)
+
     val outFileName = properties.getProperty("output.file.name")
     println(outFileName)
-    val hiveSupport = properties.getProperty("hive.support").toBoolean
-    println(hiveSupport)
+    val format = properties.getProperty("format")
+    println(format)
+
     val parThreads = properties.getProperty("spark.parallel.threads").toInt
     println(parThreads)
     val fileFormat = properties.getProperty("format")
@@ -63,12 +63,6 @@ object RDBMSTester {
       .appName("rdbms-tester")
 
 
-    if (hiveSupport) {
-
-      sparkT.config("spark.sql.warehouse.dir", "/opt/dwh")
-      sparkT.enableHiveSupport()
-
-    }
 
     val spark = sparkT.getOrCreate()
 
@@ -88,6 +82,12 @@ object RDBMSTester {
 
       println(jdbcDF.count())
       jdbcDF.show()
+
+      jdbcDF.write
+        .mode("overwrite")
+        .format(format)
+        .option("header", "true")
+        .save(outFileName)
 
     }
 
