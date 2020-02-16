@@ -9,7 +9,8 @@ Among the Performance Testing Workloads, this repo also contains innovative algo
 this is the algo in question:
 https://github.com/evoisec/ptee/blob/master/src/main/scala/PII.scala
 
-Apache JMETER is used for Test Scenario Workflow Automation
+Apache JMETER is used for Test Scenario Workflow Automation - this is a JMETER template which can orchestrate Spark Jobs, Map  Reduce Jobs, Impala and Hive JDBC Queries (the JDBC drivers and docs are in the jdbc-drivers dir of this repo)
+https://github.com/evoisec/ptee/blob/master/JMETER-DSP-Perf-Testing-Workflow-Automation-Template.jmx
 
 There is a lack of modern, business level tools for workload performance testing on Hadoop. Carried on by inertia, the majority 
 of the IT industry is still using archaic, outadted "benchmarks" the majority of which are writtent in Map Reduce 
