@@ -5,6 +5,8 @@ Enables the generation of Actionable (Measurement) Information supporting Inform
 
 Get additional, Data Science Focused, performance testing workloads from https://github.com/evoisec/ptp 
 
+Among the Performance Testing Workloads, this repo also contains innovative algorithm / method for RAPID Finding and Deleting of individual records or small groups of records from large Parquet (Impala) Tables/Files - those who know Parquet, Impala and Spark, know that such operation is NOT supported out of the box by any of these Hadoop Engines and Hadoop file format. This algo/job, besides for performance testing, can also be REUSED in ETL jobs implementing a broad range of well known Bsuiness Scenarios in a need for such functionality.    
+
 Apache JMETER is used for Test Scenario Workflow Automation
 
 There is a lack of modern, business level tools for workload performance testing on Hadoop. Carried on by inertia, the majority 
